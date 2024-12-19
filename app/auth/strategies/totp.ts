@@ -5,7 +5,7 @@
 
 import { redirect } from "react-router";
 import { Strategy } from "remix-auth/strategy";
-import { auth, AUTH_SESSION_KEY } from "../auth.server";
+import { auth, getAuthSession } from "../auth.server";
 import {
   generateVerification,
   Verification,
@@ -61,11 +61,10 @@ export class TOTPStrategy<User> extends Strategy<User, TOTPVerifyParams> {
   }
 
   async authenticate(request: Request): Promise<User> {
-    const session = await auth.getSession(request.headers.get("cookie"));
+    const { session, sessionUser } = await getAuthSession(request);
 
     // 1. Check if user is already logged in
-    const user: User | null = session.get(AUTH_SESSION_KEY);
-    if (user) return user;
+    if (sessionUser) return sessionUser;
 
     const formData = await request.clone().formData();
     const formDataEmail = toNonEmptyString(formData.get("email"));
