@@ -1,7 +1,7 @@
 import { and, eq, ne } from "drizzle-orm";
 import { data, redirect } from "react-router";
 
-import { requireSessionUser } from "~/auth/auth.server";
+import { requireAuth } from "~/auth/auth.server";
 import { ConnectedAccountItem, DeleteAccount } from "~/components/account";
 import { Separator } from "~/components/separator";
 import { RevokeOtherSessions, SessionItem } from "~/components/session";
@@ -13,26 +13,26 @@ import type { Route } from "./+types/home";
 export const meta: Route.MetaFunction = () => [{ title: "Home" }];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { userId, sessionId } = await requireSessionUser(request);
+  const { user, session } = await requireAuth(request);
 
   const [accounts, sessions] = await Promise.all([
     db.query.accountsTable.findMany({
-      where: (table, { eq }) => eq(table.user_id, userId),
+      where: (table, { eq }) => eq(table.user_id, user.id),
     }),
     db.query.sessionsTable.findMany({
-      where: (table, { eq }) => eq(table.user_id, userId),
+      where: (table, { eq }) => eq(table.user_id, user.id),
     }),
   ]);
 
   return data({
     accounts,
     sessions,
-    currentAuthSessionId: sessionId,
+    currentAuthSessionId: session.id,
   });
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const { userId, sessionId } = await requireSessionUser(request);
+  const { user, session } = await requireAuth(request);
   const formData = await request.formData();
   const intent = formData.get("intent");
 
@@ -43,14 +43,14 @@ export async function action({ request }: Route.ActionArgs) {
           .delete(sessionsTable)
           .where(
             and(
-              eq(sessionsTable.user_id, userId),
-              ne(sessionsTable.id, sessionId),
+              eq(sessionsTable.user_id, user.id),
+              ne(sessionsTable.id, session.id),
             ),
           );
       }
       break;
     case "deleteUser": {
-      await db.delete(usersTable).where(eq(usersTable.id, userId));
+      await db.delete(usersTable).where(eq(usersTable.id, user.id));
       break;
     }
     default:

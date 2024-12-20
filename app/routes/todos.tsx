@@ -3,7 +3,7 @@ import { PlusIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { data, Form, useNavigation } from "react-router";
 
-import { requireSessionUser } from "~/auth/auth.server";
+import { requireAuth } from "~/auth/auth.server";
 import { Spinner } from "~/components/spinner";
 import { DeleteTodo, ToggleTodo } from "~/components/todo";
 import { Button } from "~/components/ui/button";
@@ -16,16 +16,16 @@ import type { Route } from "./+types/todos";
 export const meta: Route.MetaFunction = () => [{ title: "Todos" }];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { userId } = await requireSessionUser(request);
+  const { user } = await requireAuth(request);
   const todos = await db.query.todosTable.findMany({
-    where: (todo, { eq }) => eq(todo.user_id, userId),
+    where: (todo, { eq }) => eq(todo.user_id, user.id),
   });
 
   return data({ todos });
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const { userId } = await requireSessionUser(request);
+  const { user } = await requireAuth(request);
   const formData = await request.clone().formData();
   const intent = formData.get("intent") as string;
   const title = formData.get("title") as string;
@@ -35,7 +35,7 @@ export async function action({ request }: Route.ActionArgs) {
   switch (intent) {
     case "add":
       if (title.length) {
-        await db.insert(todosTable).values({ title, user_id: userId });
+        await db.insert(todosTable).values({ title, user_id: user.id });
       }
       break;
     case "delete":
@@ -46,7 +46,10 @@ export async function action({ request }: Route.ActionArgs) {
     case "complete":
       if (todoId.length) {
         const _todo = await db.query.todosTable.findFirst({
-          where: and(eq(todosTable.id, todoId), eq(todosTable.user_id, userId)),
+          where: and(
+            eq(todosTable.id, todoId),
+            eq(todosTable.user_id, user.id),
+          ),
           columns: { id: true, completed: true },
         });
         if (_todo) {
@@ -54,7 +57,7 @@ export async function action({ request }: Route.ActionArgs) {
             .update(todosTable)
             .set({ completed: _todo.completed ? 0 : 1 })
             .where(
-              and(eq(todosTable.id, todoId), eq(todosTable.user_id, userId)),
+              and(eq(todosTable.id, todoId), eq(todosTable.user_id, user.id)),
             );
         }
       }

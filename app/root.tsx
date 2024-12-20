@@ -9,13 +9,12 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import { getAuthSession } from "./auth/auth.server";
+import { querySession } from "./auth/auth.server";
 import { ProgressBar } from "./components/progress-bar";
 import {
   ThemeSwitcherSafeHTML,
   ThemeSwitcherScript,
 } from "./components/theme-switcher";
-import { db } from "./database/db.server";
 import stylesheet from "./styles/app.css?url";
 
 export const links: Route.LinksFunction = () => [
@@ -33,24 +32,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { sessionUser } = await getAuthSession(request);
-
-  const user = sessionUser
-    ? await db.query.usersTable.findFirst({
-        columns: {
-          id: true,
-          display_name: true,
-          username: true,
-          email: true,
-          avatar_url: true,
-          is_active: true,
-        },
-        where: (users, { and, eq }) =>
-          and(eq(users.id, sessionUser.userId), eq(users.is_active, true)),
-      })
-    : null;
-
-  return data({ user });
+  const { validSession } = await querySession(request);
+  return data({ user: validSession?.user });
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

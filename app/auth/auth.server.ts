@@ -19,6 +19,7 @@ import { GitHubStrategy } from "./strategies/github";
 import { GoogleStrategy } from "./strategies/google";
 import { TOTPStrategy } from "./strategies/totp";
 
+// Session user type definition
 type AuthProfile = {
   email: string | undefined;
   display_name?: string;
@@ -27,17 +28,21 @@ type AuthProfile = {
   provider_account_id?: string;
 };
 
+// Authentication profile type definition
 type SessionUser = {
-  userId: string;
-  sessionId: string;
+  user_id: string;
+  session_id: string;
 };
 
+// Combined type for Authenticator and SessionStorage
 type AuthInterface = Authenticator<SessionUser> & SessionStorage;
 
+// Constants for session configuration
 export const AUTH_SESSION_KEY = "user";
 const AUTH_SESSION_NAME = "__session";
 const AUTH_SESSION_MAX_AGE = 1000 * 60 * 60 * 24 * 7; // 7 days
 
+// Create an auth instance with session storage and authentication strategies
 export const auth = new Proxy({} as AuthInterface, {
   get(_target, prop: keyof AuthInterface) {
     const store = getSessionContext<{
@@ -56,6 +61,7 @@ export const auth = new Proxy({} as AuthInterface, {
   },
 });
 
+// Create an authentication instance with session storage and strategies
 export function createAuth(env: Env): AuthInterface {
   const sessionStorage = createCookieSessionStorage({
     cookie: {
@@ -84,12 +90,12 @@ export function createAuth(env: Env): AuthInterface {
         },
       },
       async ({ email, request }) => {
-        const user = await handleUserAuth({
+        const user_id = await handleUserAuth({
           email,
           provider: "totp",
         });
-        const sessionId = await createUserSession(user.id, request);
-        return { userId: user.id, sessionId };
+        const session_id = await createUserSession(user_id, request);
+        return { user_id, session_id };
       },
     ),
   );
@@ -103,15 +109,15 @@ export function createAuth(env: Env): AuthInterface {
       },
       async ({ tokens, request }) => {
         const profile = await GoogleStrategy.userProfile(tokens);
-        const user = await handleUserAuth({
+        const user_id = await handleUserAuth({
           email: profile._json.email,
           display_name: profile.displayName,
           avatar_url: profile._json.picture,
           provider: "google",
           provider_account_id: profile.id,
         });
-        const sessionId = await createUserSession(user.id, request);
-        return { userId: user.id, sessionId };
+        const session_id = await createUserSession(user_id, request);
+        return { user_id, session_id };
       },
     ),
   );
@@ -125,15 +131,15 @@ export function createAuth(env: Env): AuthInterface {
       },
       async ({ tokens, request }) => {
         const profile = await GitHubStrategy.userProfile(tokens);
-        const user = await handleUserAuth({
+        const user_id = await handleUserAuth({
           email: profile._json.email || profile?.emails[0]?.value,
           display_name: profile.displayName,
           avatar_url: profile._json.avatar_url,
           provider: "github",
           provider_account_id: profile.id,
         });
-        const sessionId = await createUserSession(user.id, request);
-        return { userId: user.id, sessionId };
+        const session_id = await createUserSession(user_id, request);
+        return { user_id, session_id };
       },
     ),
   );
@@ -145,7 +151,8 @@ export function createAuth(env: Env): AuthInterface {
   });
 }
 
-export async function createUserSession(userId: string, request: Request) {
+// Create a new session for user
+export async function createUserSession(user_id: string, request: Request) {
   const expires_at = new Date(Date.now() + AUTH_SESSION_MAX_AGE);
   const user_agent = request.headers.get("user-agent");
   const ip_address = request.headers.get("cf-connecting-ip") || "127.0.0.1";
@@ -154,7 +161,7 @@ export async function createUserSession(userId: string, request: Request) {
   const { id } = await db
     .insert(sessionsTable)
     .values({
-      user_id: userId,
+      user_id,
       expires_at,
       user_agent,
       ip_address,
@@ -166,19 +173,20 @@ export async function createUserSession(userId: string, request: Request) {
   return id;
 }
 
+// Handle user authentication and account creation/linking
 export async function handleUserAuth(profile: AuthProfile) {
   let { email, display_name, avatar_url, provider, provider_account_id } =
     profile;
 
   if (!email) {
-    throw new Error(`Not email address in ${provider} profile`);
+    throw new Error(`Email is required for ${provider} authentication`);
   }
 
   email = email.toLowerCase();
   let username = email.substring(0, email.indexOf("@"));
   display_name = display_name || username;
 
-  // 1. Find existing user and provider
+  // Find existing user and provider
   const existingUser = await db
     .select({
       id: usersTable.id,
@@ -200,7 +208,7 @@ export async function handleUserAuth(profile: AuthProfile) {
     )
     .get();
 
-  // 2. If user exists and email matches
+  // Handle existing user
   if (existingUser) {
     if (!existingUser.is_active) {
       throw new Error("User is not active");
@@ -224,7 +232,7 @@ export async function handleUserAuth(profile: AuthProfile) {
         });
       }
 
-      return { id: existingUser.id };
+      return existingUser.id;
     }
 
     // If username is taken, generate a new one
@@ -233,62 +241,106 @@ export async function handleUserAuth(profile: AuthProfile) {
     }
   }
 
-  // 3. Create new user
+  // Create new user
   const { user_id } = await db
     .insert(usersTable)
     .values({ email, username, display_name, avatar_url })
     .returning({ user_id: usersTable.id })
     .get();
 
-  // 4. Create provider association
+  // Create provider association
   await db.insert(accountsTable).values({
     user_id,
     provider,
     provider_account_id: provider_account_id || user_id,
   });
 
-  return { id: user_id };
+  return user_id;
 }
 
-export async function getAuthSession(request: Request) {
+// Validate session and get user data
+async function validateSession(sessionUser: SessionUser | null) {
+  if (!sessionUser) return null;
+
+  const sessionRecord = await db.query.sessionsTable.findFirst({
+    where: (sessions, { and, eq, gt }) =>
+      and(
+        eq(sessions.id, sessionUser.session_id),
+        gt(sessions.expires_at, new Date()),
+      ),
+    with: {
+      user: {
+        columns: {
+          id: true,
+          is_active: true,
+          email: true,
+          username: true,
+          display_name: true,
+          avatar_url: true,
+        },
+      },
+    },
+    columns: {
+      id: true,
+      expires_at: true,
+    },
+  });
+
+  if (!sessionRecord?.user || !sessionRecord.user.is_active) {
+    return null;
+  }
+
+  return {
+    session: {
+      id: sessionRecord.id,
+      expires_at: sessionRecord.expires_at,
+    },
+    user: sessionRecord.user,
+  };
+}
+
+// Get session data from cookie
+export async function getSessionFromCookie(request: Request) {
   const session = await auth.getSession(request.headers.get("Cookie"));
   const sessionUser = session.get(AUTH_SESSION_KEY);
+
+  if (!sessionUser) {
+    return { session, sessionUser: null };
+  }
+
   return { session, sessionUser };
 }
 
-export async function requireSessionUser(
+// Query current session and validate its status
+export async function querySession(request: Request) {
+  const { session, sessionUser } = await getSessionFromCookie(request);
+  const validSession = await validateSession(sessionUser);
+  return { session, validSession };
+}
+
+// Ensure user is not authenticated (for login/register pages)
+export async function requireAnonymous(request: Request, redirectTo = "/home") {
+  const { validSession } = await querySession(request);
+
+  if (validSession) {
+    throw redirect(redirectTo);
+  }
+}
+
+// Ensure user is authenticated (for protected pages)
+export async function requireAuth(
   request: Request,
-): Promise<SessionUser> {
-  const { session, sessionUser } = await getAuthSession(request);
+  redirectTo = "/auth/login",
+) {
+  const { session, validSession } = await querySession(request);
 
-  const sessionRecord = sessionUser
-    ? await db.query.sessionsTable.findFirst({
-        where: (sessions, { and, eq, gt }) =>
-          and(
-            eq(sessions.id, sessionUser.sessionId),
-            gt(sessions.expires_at, new Date()),
-          ),
-        with: {
-          user: {
-            columns: {
-              id: true,
-              is_active: true,
-            },
-          },
-        },
-        columns: {
-          id: true,
-        },
-      })
-    : null;
-
-  if (!sessionRecord?.user || !sessionRecord.user.is_active) {
-    throw redirect("/auth/login", {
+  if (!validSession) {
+    throw redirect(redirectTo, {
       headers: {
-        "set-cookie": await auth.destroySession(session),
+        "Set-Cookie": await auth.destroySession(session),
       },
     });
   }
 
-  return { userId: sessionRecord.user.id, sessionId: sessionRecord.id };
+  return validSession;
 }

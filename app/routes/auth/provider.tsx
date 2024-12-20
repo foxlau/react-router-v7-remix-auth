@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
-import { auth, getAuthSession } from "~/auth/auth.server";
+import { auth, requireAnonymous } from "~/auth/auth.server";
 import type { Route } from "./+types/provider";
 
 export async function loader() {
@@ -7,11 +7,6 @@ export async function loader() {
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-  const { sessionUser } = await getAuthSession(request);
-
-  if (sessionUser) {
-    throw redirect("/home");
-  }
-
+  await requireAnonymous(request);
   return await auth.authenticate(params.provider, request);
 }

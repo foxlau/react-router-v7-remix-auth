@@ -1,6 +1,10 @@
 import { data, Form, redirect } from "react-router";
 
-import { auth, getAuthSession } from "~/auth/auth.server";
+import {
+  auth,
+  getSessionFromCookie,
+  requireAnonymous,
+} from "~/auth/auth.server";
 import { Alert } from "~/components/alert";
 import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { Spinner } from "~/components/spinner";
@@ -12,11 +16,8 @@ import type { Route } from "./+types/login";
 export const meta: Route.MetaFunction = () => [{ title: "Login" }];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { session, sessionUser } = await getAuthSession(request);
-
-  if (sessionUser) {
-    throw redirect("/home");
-  }
+  await requireAnonymous(request);
+  const { session } = await getSessionFromCookie(request);
 
   return data(
     {
@@ -28,22 +29,17 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const { session, sessionUser } = await getAuthSession(request);
-
-  if (sessionUser) {
-    throw redirect("/home");
-  }
+  await requireAnonymous(request);
+  const { session } = await getSessionFromCookie(request);
 
   try {
     return await auth.authenticate("totp", request);
   } catch (error) {
     if (error instanceof Response) throw error;
-
     session.flash(
       "auth:error",
       error instanceof Error ? error.message : "Wow, something went wrong",
     );
-
     return redirect("/auth/login", {
       headers: { "Set-Cookie": await auth.commitSession(session) },
     });
