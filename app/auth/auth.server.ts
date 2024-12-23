@@ -320,11 +320,13 @@ export async function querySession(request: Request) {
 
 // Ensure user is not authenticated (for login/register pages)
 export async function requireAnonymous(request: Request, redirectTo = "/home") {
-  const { validSession } = await querySession(request);
+  const { session, validSession } = await querySession(request);
 
   if (validSession) {
     throw redirect(redirectTo);
   }
+
+  return { session };
 }
 
 // Ensure user is authenticated (for protected pages)

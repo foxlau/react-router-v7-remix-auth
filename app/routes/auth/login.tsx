@@ -1,10 +1,6 @@
 import { data, Form, redirect } from "react-router";
 
-import {
-  auth,
-  getSessionFromCookie,
-  requireAnonymous,
-} from "~/auth/auth.server";
+import { auth, requireAnonymous } from "~/auth/auth.server";
 import { Alert } from "~/components/alert";
 import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { Spinner } from "~/components/spinner";
@@ -16,8 +12,7 @@ import type { Route } from "./+types/login";
 export const meta: Route.MetaFunction = () => [{ title: "Login" }];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  await requireAnonymous(request);
-  const { session } = await getSessionFromCookie(request);
+  const { session } = await requireAnonymous(request);
 
   return data(
     {
@@ -29,8 +24,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  await requireAnonymous(request);
-  const { session } = await getSessionFromCookie(request);
+  const { session } = await requireAnonymous(request);
 
   try {
     return await auth.authenticate("totp", request);
