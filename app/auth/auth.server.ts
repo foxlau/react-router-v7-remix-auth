@@ -286,7 +286,11 @@ async function validateSession(sessionUser: SessionUser | null) {
     },
   });
 
+  // Delete session if it has expired or user is inactive
   if (!sessionRecord?.user || !sessionRecord.user.is_active) {
+    await db
+      .delete(sessionsTable)
+      .where(eq(sessionsTable.id, sessionUser.session_id));
     return null;
   }
 
