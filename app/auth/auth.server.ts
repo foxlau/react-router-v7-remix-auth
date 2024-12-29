@@ -40,7 +40,7 @@ type AuthInterface = Authenticator<SessionUser> & SessionStorage;
 // Constants for session configuration
 export const AUTH_SESSION_KEY = "user";
 const AUTH_SESSION_NAME = "__session";
-const AUTH_SESSION_MAX_AGE = 1000 * 60 * 60 * 24 * 7; // 7 days
+const AUTH_SESSION_TTL = 60 * 60 * 24 * 7; // 7 days
 
 // Create an auth instance with session storage and authentication strategies
 export const auth = new Proxy({} as AuthInterface, {
@@ -69,9 +69,9 @@ export function createAuth(env: Env): AuthInterface {
       path: "/",
       sameSite: "lax",
       httpOnly: true,
-      secrets: [env.SESSION_SECRET],
-      secure: env.ENVIRONMENT === "production",
-      maxAge: AUTH_SESSION_MAX_AGE,
+      secrets: [env.SESSION_SECRET ?? "s3cr3t"],
+      secure: process.env.NODE_ENV === "production",
+      maxAge: AUTH_SESSION_TTL,
     },
   });
 
@@ -144,16 +144,12 @@ export function createAuth(env: Env): AuthInterface {
     ),
   );
 
-  return Object.assign(authenticator, {
-    getSession: sessionStorage.getSession,
-    commitSession: sessionStorage.commitSession,
-    destroySession: sessionStorage.destroySession,
-  });
+  return Object.assign(authenticator, sessionStorage);
 }
 
 // Create a new session for user
 export async function createUserSession(user_id: string, request: Request) {
-  const expires_at = new Date(Date.now() + AUTH_SESSION_MAX_AGE);
+  const expires_at = new Date(Date.now() + AUTH_SESSION_TTL * 1000);
   const user_agent = request.headers.get("user-agent");
   const ip_address = request.headers.get("cf-connecting-ip") || "127.0.0.1";
   const country = request.headers.get("cf-ipcountry") || "Unknown";
