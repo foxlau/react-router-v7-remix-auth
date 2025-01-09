@@ -15,6 +15,7 @@ import {
   usersTable,
   type SelectAccount,
 } from "~/database/schema";
+import { sendTotpVerificationEmail } from "./email-user.server";
 import { GitHubStrategy } from "./strategies/github";
 import { GoogleStrategy } from "./strategies/google";
 import { TOTPStrategy } from "./strategies/totp";
@@ -70,7 +71,7 @@ export function createAuth(env: Env): AuthInterface {
       sameSite: "lax",
       httpOnly: true,
       secrets: [env.SESSION_SECRET ?? "s3cr3t"],
-      secure: process.env.NODE_ENV === "production",
+      secure: import.meta.env.PROD,
       maxAge: AUTH_SESSION_TTL,
     },
   });
@@ -87,6 +88,7 @@ export function createAuth(env: Env): AuthInterface {
             return;
           }
           // Send code to user ...
+          sendTotpVerificationEmail({ email, code });
         },
       },
       async ({ email, request }) => {
