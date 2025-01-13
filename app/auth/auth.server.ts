@@ -1,7 +1,10 @@
+import { createId } from "@paralleldrive/cuid2";
 import { and, eq, or } from "drizzle-orm";
 import {
   createCookieSessionStorage,
   redirect,
+  type Session,
+  type SessionData,
   type SessionStorage,
 } from "react-router";
 import { Authenticator } from "remix-auth";
@@ -15,6 +18,8 @@ import {
   usersTable,
   type SelectAccount,
 } from "~/database/schema";
+import { getErrorMessage } from "~/lib/utils";
+
 import { GitHubStrategy } from "./strategies/github";
 import { GoogleStrategy } from "./strategies/google";
 import { TOTPStrategy } from "./strategies/totp";
@@ -237,25 +242,32 @@ export async function handleUserAuth(profile: AuthProfile) {
     }
   }
 
-  // Create new user
-  const { user_id } = await db
-    .insert(usersTable)
-    .values({ email, username, display_name, avatar_url })
-    .returning({ user_id: usersTable.id })
-    .get();
+  try {
+    const user_id = createId();
+    await db.batch([
+      db
+        .insert(usersTable)
+        .values({ id: user_id, email, username, display_name, avatar_url }),
+      db.insert(accountsTable).values({
+        user_id,
+        provider,
+        provider_account_id: provider_account_id || user_id,
+      }),
+    ]);
 
-  // Create provider association
-  await db.insert(accountsTable).values({
-    user_id,
-    provider,
-    provider_account_id: provider_account_id || user_id,
-  });
-
-  return user_id;
+    return user_id;
+  } catch (error) {
+    const message = getErrorMessage(error);
+    console.error("handleUserAuth", message);
+    throw new Error("Login failed, please try again");
+  }
 }
 
 // Validate session and get user data
-async function validateSession(sessionUser: SessionUser | null) {
+async function validateSession(
+  session: Session<SessionData, SessionData>,
+  sessionUser: SessionUser | null,
+) {
   if (!sessionUser) return null;
 
   const sessionRecord = await db.query.sessionsTable.findFirst({
@@ -287,7 +299,9 @@ async function validateSession(sessionUser: SessionUser | null) {
     await db
       .delete(sessionsTable)
       .where(eq(sessionsTable.id, sessionUser.session_id));
-    return null;
+    throw redirect("/", {
+      headers: { "Set-Cookie": await auth.destroySession(session) },
+    });
   }
 
   return {
@@ -303,18 +317,13 @@ async function validateSession(sessionUser: SessionUser | null) {
 export async function getSessionFromCookie(request: Request) {
   const session = await auth.getSession(request.headers.get("Cookie"));
   const sessionUser = session.get(AUTH_SESSION_KEY);
-
-  if (!sessionUser) {
-    return { session, sessionUser: null };
-  }
-
-  return { session, sessionUser };
+  return { session, sessionUser: sessionUser || null };
 }
 
 // Query current session and validate its status
 export async function querySession(request: Request) {
   const { session, sessionUser } = await getSessionFromCookie(request);
-  const validSession = await validateSession(sessionUser);
+  const validSession = await validateSession(session, sessionUser);
   return { session, validSession };
 }
 

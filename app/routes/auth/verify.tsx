@@ -1,9 +1,9 @@
 import { data, Form, redirect } from "react-router";
-import { auth } from "~/auth/auth.server";
-import { Alert } from "~/components/alert";
-import { Spinner } from "~/components/spinner";
+import { auth, AUTH_SESSION_KEY } from "~/auth/auth.server";
+import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Spinner } from "~/components/ui/spinner";
 import { useIsPending } from "~/hooks/use-is-pending";
 import type { Route } from "./+types/verify";
 
@@ -30,7 +30,7 @@ export async function action({ request }: Route.ActionArgs) {
   try {
     const user = await auth.authenticate("totp", request);
     session.unset("auth:email");
-    session.set("user", user);
+    session.set(AUTH_SESSION_KEY, user);
 
     return redirect("/home", {
       headers: { "Set-Cookie": await auth.commitSession(session) },

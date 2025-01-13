@@ -119,3 +119,7 @@ export function callAll<Args extends Array<unknown>>(
     }
   };
 }
+
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Unknown error";
+}

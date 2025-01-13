@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
-import { auth } from "~/auth/auth.server";
+import { auth, AUTH_SESSION_KEY } from "~/auth/auth.server";
 import type { Route } from "./+types/provider-callback";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -11,7 +11,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     }
 
     const user = await auth.authenticate(params.provider, request);
-    session.set("user", user);
+    session.set(AUTH_SESSION_KEY, user);
 
     return redirect("/home", {
       headers: { "Set-Cookie": await auth.commitSession(session) },
