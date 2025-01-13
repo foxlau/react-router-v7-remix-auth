@@ -1,5 +1,4 @@
 import { useSubmit } from "react-router";
-
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,

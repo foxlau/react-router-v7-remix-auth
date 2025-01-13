@@ -3,7 +3,6 @@ import { data, redirect } from "react-router";
 
 import { requireAuth } from "~/auth/auth.server";
 import { ConnectedAccountItem, DeleteAccount } from "~/components/account";
-import { Separator } from "~/components/separator";
 import { RevokeOtherSessions, SessionItem } from "~/components/session";
 import { db } from "~/database/db.server";
 import { sessionsTable, usersTable } from "~/database/schema";
@@ -75,7 +74,7 @@ export default function Home({
         <p className="text-foreground/70">{user.email}</p>
       </section>
 
-      <Separator />
+      <hr />
 
       {/* Connected Accounts */}
       <section className="space-y-4">
@@ -91,7 +90,7 @@ export default function Home({
         </div>
       </section>
 
-      <Separator />
+      <hr />
 
       {/* Recent Sessions */}
       <section className="space-y-4">
@@ -99,8 +98,7 @@ export default function Home({
         <p className="text-foreground/70">
           If necessary, you can sign out of all other browser sessions. Some of
           your recent sessions are listed below, but this list may not be
-          complete. If you think your account has been compromised, you should
-          also update your password.
+          complete.
         </p>
         <div className="space-y-2">
           {sessions.map((session) => (
@@ -114,7 +112,7 @@ export default function Home({
         {sessions.length > 1 && <RevokeOtherSessions />}
       </section>
 
-      <Separator />
+      <hr />
 
       {/* Delete Account */}
       <DeleteAccount />

@@ -1,11 +1,10 @@
 import { data, Form, redirect } from "react-router";
-
 import { auth, requireAnonymous } from "~/auth/auth.server";
-import { Alert } from "~/components/alert";
 import { GithubIcon, GoogleIcon } from "~/components/icons";
-import { Spinner } from "~/components/spinner";
+import { Alert } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Spinner } from "~/components/ui/spinner";
 import { useIsPending } from "~/hooks/use-is-pending";
 import type { Route } from "./+types/login";
 

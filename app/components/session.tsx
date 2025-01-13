@@ -1,9 +1,8 @@
 import { Monitor, Smartphone } from "lucide-react";
 import { useEffect } from "react";
 import { useFetcher } from "react-router";
-
-import { Spinner } from "~/components/spinner";
 import { Button } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
 import { useDoubleCheck } from "~/hooks/use-double-check";
 import { useHydrated } from "~/hooks/use-hydrated";
 import { formatDate, parseUserAgent } from "~/lib/utils";

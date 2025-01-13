@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import { data, Form, useNavigation } from "react-router";
 
 import { requireAuth } from "~/auth/auth.server";
-import { Spinner } from "~/components/spinner";
 import { DeleteTodo, ToggleTodo } from "~/components/todo";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Spinner } from "~/components/ui/spinner";
 import { db } from "~/database/db.server";
 import { todosTable } from "~/database/schema";
 import { useIsPending } from "~/hooks/use-is-pending";

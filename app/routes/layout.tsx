@@ -36,7 +36,7 @@ export default function Layout() {
           <UserNav />
         </div>
       </header>
-      <main className="mx-auto max-w-md px-6 pb-36 pt-6">
+      <main className="mx-auto max-w-xl px-6 pb-36 pt-6">
         <Outlet />
       </main>
     </>

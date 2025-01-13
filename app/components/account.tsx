@@ -1,13 +1,12 @@
 import { ContactRoundIcon } from "lucide-react";
 import { useEffect } from "react";
 import { Form } from "react-router";
-
 import { useDoubleCheck } from "~/hooks/use-double-check";
 import { useIsPending } from "~/hooks/use-is-pending";
 import type { loader } from "~/routes/home";
 import { GithubIcon, GoogleIcon } from "./icons";
-import { Spinner } from "./spinner";
 import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
 
 export function ConnectedAccountItem({
   account,

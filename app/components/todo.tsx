@@ -1,14 +1,13 @@
 import { CheckIcon, XIcon } from "lucide-react";
-import { useFetcher } from "react-router";
-
 import { useState } from "react";
+import { useFetcher } from "react-router";
 import { useDoubleCheck } from "~/hooks/use-double-check";
 import { cn } from "~/lib/utils";
 import type { loader } from "~/routes/todos";
-import { Spinner } from "./spinner";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
+import { Spinner } from "./ui/spinner";
 
 export function ToggleTodo({
   todo,
