@@ -1,10 +1,12 @@
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
-import type { AppLoadContext, EntryContext } from "react-router";
+import type {
+  AppLoadContext,
+  EntryContext,
+  HandleErrorFunction,
+} from "react-router";
 import { ServerRouter } from "react-router";
 import { NonceProvider } from "./hooks/use-nonce";
-
-const ABORT_DELAY = 5_000;
 
 export default async function handleRequest(
   request: Request,
@@ -28,12 +30,7 @@ export default async function handleRequest(
 
   const body = await renderToReadableStream(
     <NonceProvider value={nonce}>
-      <ServerRouter
-        context={routerContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-        nonce={nonce}
-      />
+      <ServerRouter context={routerContext} url={request.url} nonce={nonce} />
     </NonceProvider>,
     {
       onError(error: unknown) {
@@ -63,3 +60,17 @@ export default async function handleRequest(
     status: responseStatusCode,
   });
 }
+
+// Error Reporting
+// https://reactrouter.com/how-to/error-reporting
+export const handleError: HandleErrorFunction = (error, { request }) => {
+  if (request.signal.aborted) {
+    return;
+  }
+
+  if (error instanceof Error) {
+    console.error(error.stack);
+  } else {
+    console.error(error);
+  }
+};
