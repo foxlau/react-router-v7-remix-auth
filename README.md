@@ -22,6 +22,17 @@ An introductory starter kit for building applications with React Router v7 (Remi
 - 🚀 **Cloudflare Workers-Ready**  
   Optimized for deployment on Cloudflare Workers.
 
+## Demo
+
+Here’s a preview of the app:
+
+<div style="display: flex;">
+  <img src="./.assets/login.png" width="45%" />
+  <img src="./.assets/account.png" width="45%" />
+</div>
+
+For more demo images, check the **.assets** directory.
+
 
 ## Links
 

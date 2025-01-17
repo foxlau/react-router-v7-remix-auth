@@ -2,7 +2,7 @@
 export const site = {
   name: "RRv7",
   description: "Your website description...",
-  email: "support@yooying.com",
-  noReplyEmail: "noreply@yooying.com",
+  email: "support@yourdomain.com",
+  noReplyEmail: "noreply@yourdomain.com",
   // more config...
 };
