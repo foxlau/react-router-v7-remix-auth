@@ -1,8 +1,14 @@
-import { useSubmit } from "react-router";
+import {
+  LogOut,
+  LucideSquareArrowOutUpRight,
+  SettingsIcon,
+} from "lucide-react";
+import { useNavigate, useSubmit } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -14,46 +20,66 @@ import { Button } from "./ui/button";
 export function UserNav() {
   const user = useUser();
   const submit = useSubmit();
+  const navigate = useNavigate();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8 rounded-full">
-          <Avatar className="h-8 w-8">
+          <Avatar className="size-8">
             <AvatarImage
               src={
-                user?.avatar_url
-                  ? user?.avatar_url
-                  : `https://avatar.vercel.sh/${user?.username}`
+                user?.avatarUrl
+                  ? user?.avatarUrl
+                  : `https://avatar.vercel.sh/${user?.displayName}`
               }
-              alt={user?.display_name ?? "User avatar"}
+              alt={user?.displayName ?? "User avatar"}
             />
             <AvatarFallback className="text-xs font-bold uppercase">
-              {user?.display_name?.slice(0, 2)}
+              {user?.displayName?.slice(0, 2)}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col">
-            <strong className="font-medium">
-              {user?.display_name ?? user?.username}
-            </strong>
-            <p className="truncate text-muted-foreground">{user?.email}</p>
-          </div>
+        <DropdownMenuLabel className="flex min-w-0 flex-col">
+          <span className="truncate text-sm font-medium text-foreground">
+            {user?.displayName ?? user?.email}
+          </span>
+          <span className="truncate text-xs font-normal text-muted-foreground">
+            {user?.email}
+          </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-          onClick={() => {
-            setTimeout(() => {
-              submit(null, { method: "POST", action: "/auth/logout" });
-            }, 100);
-          }}
-        >
-          Log out
-        </DropdownMenuItem>
+
+        <DropdownMenuGroup>
+          <DropdownMenuItem onClick={() => navigate("/")}>
+            <LucideSquareArrowOutUpRight
+              size={16}
+              className="opacity-60"
+              aria-hidden="true"
+            />
+            Home page
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate("/account")}>
+            <SettingsIcon size={16} className="opacity-60" aria-hidden="true" />
+            <span>Account</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+            onClick={() => {
+              setTimeout(() => {
+                submit(null, { method: "POST", action: "/auth/logout" });
+              }, 100);
+            }}
+          >
+            <LogOut size={16} className="opacity-60" aria-hidden="true" />
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

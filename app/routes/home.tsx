@@ -1,121 +1,62 @@
-import { and, eq, ne } from "drizzle-orm";
-import { data, redirect } from "react-router";
-
-import { requireAuth } from "~/auth/auth.server";
-import { ConnectedAccountItem, DeleteAccount } from "~/components/account";
-import { RevokeOtherSessions, SessionItem } from "~/components/session";
-import { db } from "~/database/db.server";
-import { sessionsTable, usersTable } from "~/database/schema";
-import { useUser } from "~/hooks/use-user";
+import { ArrowRightIcon } from "lucide-react";
+import { data, Link } from "react-router";
+import { requireAuth } from "~/lib/auth/session.server";
+import { site } from "~/lib/config";
 import type { Route } from "./+types/home";
 
-export const meta: Route.MetaFunction = () => [{ title: "Home" }];
+export const meta: Route.MetaFunction = () => [
+  { title: `Home • ${site.name}` },
+];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { user, session } = await requireAuth(request);
-
-  const [accounts, sessions] = await Promise.all([
-    db.query.accountsTable.findMany({
-      where: (table, { eq }) => eq(table.user_id, user.id),
-    }),
-    db.query.sessionsTable.findMany({
-      where: (table, { eq }) => eq(table.user_id, user.id),
-    }),
-  ]);
-
-  return data({
-    accounts,
-    sessions,
-    currentAuthSessionId: session.id,
-  });
+  const { user } = await requireAuth(request);
+  return data({ user });
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const { user, session } = await requireAuth(request);
-  const formData = await request.formData();
-  const intent = formData.get("intent");
-
-  switch (intent) {
-    case "revokeOtherSessions":
-      {
-        await db
-          .delete(sessionsTable)
-          .where(
-            and(
-              eq(sessionsTable.user_id, user.id),
-              ne(sessionsTable.id, session.id),
-            ),
-          );
-      }
-      break;
-    case "deleteUser": {
-      await db.delete(usersTable).where(eq(usersTable.id, user.id));
-      break;
-    }
-    default:
-      throw new Error("Invalid intent");
-  }
-
-  return redirect("/home");
-}
-
-export default function Home({
-  loaderData: { accounts, sessions, currentAuthSessionId },
+export default function HomeRoute({
+  loaderData: { user },
 }: Route.ComponentProps) {
-  const user = useUser();
-
   return (
-    <div className="space-y-8">
-      {/* User Info */}
-      <section className="space-y-2">
-        <h1 className="text-base font-semibold capitalize">
-          {user.display_name}
-        </h1>
-        <p className="text-foreground/70">{user.email}</p>
-      </section>
-
-      <hr />
-
-      {/* Connected Accounts */}
-      <section className="space-y-4">
-        <h2 className="font-semibold">Connected accounts</h2>
-        <div className="space-y-4">
-          {accounts.map((account) => (
-            <ConnectedAccountItem
-              key={account.id}
-              account={account}
-              email={user.email}
-            />
-          ))}
-        </div>
-      </section>
-
-      <hr />
-
-      {/* Recent Sessions */}
-      <section className="space-y-4">
-        <h2 className="font-semibold">Recent sessions</h2>
-        <p className="text-foreground/70">
-          If necessary, you can sign out of all other browser sessions. Some of
-          your recent sessions are listed below, but this list may not be
-          complete.
+    <div className="space-y-12">
+      <header className="space-y-2">
+        <h2 className="text-xl font-semibold">
+          <span className="mr-2 text-2xl">👋</span> Hi, {user.displayName}!
+        </h2>
+        <p className="text-base text-muted-foreground">
+          Welcome to your dashboard. Here you can manage your todos and account
+          settings.
         </p>
-        <div className="space-y-2">
-          {sessions.map((session) => (
-            <SessionItem
-              key={session.id}
-              session={session}
-              isCurrentAuthSession={currentAuthSessionId === session.id}
-            />
-          ))}
-        </div>
-        {sessions.length > 1 && <RevokeOtherSessions />}
-      </section>
-
-      <hr />
-
-      {/* Delete Account */}
-      <DeleteAccount />
+      </header>
+      <nav>
+        <ul className="flex flex-col gap-2">
+          <li>
+            <Link
+              to="/todos"
+              className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-bold shadow-sm shadow-black/5 outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
+            >
+              <span className="truncate">Manage todos</span>
+              <ArrowRightIcon
+                size={16}
+                strokeWidth={2}
+                className="-mr-1 ml-2 shrink-0 opacity-60"
+              />
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/account"
+              className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-bold shadow-sm shadow-black/5 outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
+            >
+              <span className="truncate">Account settings</span>
+              <ArrowRightIcon
+                size={16}
+                strokeWidth={2}
+                className="-mr-1 ml-2 shrink-0 opacity-60"
+              />
+            </Link>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }

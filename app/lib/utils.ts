@@ -5,11 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function isValidEmailFormat(email: string): boolean {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-}
-
 export function isValidTokenRegex(
   token: string,
   expectedLength: number,
@@ -118,6 +113,27 @@ export function callAll<Args extends Array<unknown>>(
       fn?.(...args);
     }
   };
+}
+
+export function combineHeaders(
+  ...headers: Array<ResponseInit["headers"] | null | undefined>
+) {
+  const combined = new Headers();
+  for (const header of headers) {
+    if (!header) continue;
+    for (const [key, value] of new Headers(header).entries()) {
+      combined.append(key, value);
+    }
+  }
+  return combined;
+}
+
+export function formatExpiryDuration(seconds: number): string {
+  if (seconds >= 60) {
+    const minutes = Math.ceil(seconds / 60);
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+  }
+  return `${seconds} seconds`;
 }
 
 export function getErrorMessage(error: unknown): string {

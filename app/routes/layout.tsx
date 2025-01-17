@@ -1,8 +1,13 @@
 import { HouseIcon, PlusIcon } from "lucide-react";
 import { Link, Outlet } from "react-router";
-
-import { ThemeSelector } from "~/components/theme-selector";
-import { Button } from "~/components/ui/button";
+import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
+import { buttonVariants } from "~/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { UserNav } from "~/components/user-nav";
 
 export default function Layout() {
@@ -10,33 +15,34 @@ export default function Layout() {
     <>
       <header className="relative flex w-full items-center justify-between px-4 py-4 sm:px-6">
         <div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full"
-            asChild
+          <Link
+            to="/home"
+            className={buttonVariants({ variant: "ghost", size: "icon" })}
           >
-            <Link to="/home">
-              <HouseIcon />
-            </Link>
-          </Button>
+            <HouseIcon />
+          </Link>
         </div>
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full"
-            asChild
-          >
-            <Link to="/todos">
-              <PlusIcon />
-            </Link>
-          </Button>
-          <ThemeSelector />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to="/todos"
+                  className={buttonVariants({ variant: "ghost", size: "icon" })}
+                >
+                  <PlusIcon />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Add todo</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <ColorSchemeToggle />
           <UserNav />
         </div>
       </header>
-      <main className="mx-auto max-w-xl px-6 pb-36 pt-6">
+      <main className="mx-auto max-w-screen-sm px-6 pb-36 pt-6">
         <Outlet />
       </main>
     </>

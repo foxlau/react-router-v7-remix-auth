@@ -1,18 +1,13 @@
 import { ArrowRightIcon } from "lucide-react";
 import { Link } from "react-router";
-
 import { GithubIcon, ReactRouterIcon } from "~/components/icons";
-import { ThemeSelector } from "~/components/theme-selector";
 import { Button } from "~/components/ui/button";
 
 export const meta = () => [{ title: "React Router(v7) x Remix Auth" }];
 
-export default function Home() {
+export default function IndexRoute() {
   return (
     <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-background">
-      <div className="absolute right-4 top-4 sm:right-6">
-        <ThemeSelector />
-      </div>
       <main className="container mx-auto flex flex-1 flex-col items-center justify-center overflow-hidden px-8">
         <section className="z-20 flex flex-col items-center justify-center gap-[18px] sm:gap-6">
           <div className="flex items-center gap-4">
