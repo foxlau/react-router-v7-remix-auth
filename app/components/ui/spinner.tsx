@@ -1,9 +1,9 @@
 import { cn } from "~/lib/utils";
 
-export function Spinner({ className }: { className?: string }) {
+const Spinner = ({ className }: { className?: string }) => {
   return (
     <svg
-      className={cn("animate-spin", className)}
+      className={cn("size-4 animate-spin", className)}
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       aria-label="Loading..."
@@ -25,4 +25,6 @@ export function Spinner({ className }: { className?: string }) {
       />
     </svg>
   );
-}
+};
+
+export { Spinner };
