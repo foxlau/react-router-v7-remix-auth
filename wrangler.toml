@@ -13,7 +13,7 @@ assets = { directory = "./build/client/" }
 
 # KV namespaces
 kv_namespaces = [
-  { binding = "AUTH_VERIFICATION_KV", id = "auth_verification_kv_id" },
+  { binding = "APP_KV", id = "app_kv_id", preview_id = "app_kv_id" },
 ]
 
 # Observability
@@ -36,11 +36,13 @@ migrations_dir = "drizzle"
 [vars]
 ENVIRONMENT = "development" # development | production
 
-APP_URL = "http://localhost:8787"
+APP_URL = "http://localhost:5173"
 SESSION_SECRET = "3ebc25b381e87193f29ffea6b6d380dd" # https://generate-secret.vercel.app/32
 
 GITHUB_CLIENT_ID = "..."
 GITHUB_CLIENT_SECRET = "..."
 
-GOOGLE_CLIENT_ID = "..."
+GOOGLE_CLIENT_ID = "...apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "..."
+
+RESEND_API_KEY = "re_..."
