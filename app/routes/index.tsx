@@ -20,8 +20,9 @@ export default function IndexRoute() {
             </div>
           </div>
           <p className="text-center text-base font-normal sm:w-[466px] sm:text-[18px] sm:leading-7">
-            A production-ready template built with React Router v7, Remix Auth,
-            and Drizzle ORM for Cloudflare Workers.
+            An introductory starter kit for building applications with React
+            Router v7 (Remix) and Remix Auth, designed to run seamlessly on
+            Cloudflare Workers.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button variant="outline" className="rounded-full" asChild>
