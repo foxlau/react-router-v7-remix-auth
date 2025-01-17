@@ -3,6 +3,8 @@
 An introductory starter kit for building applications with React Router v7 (Remix) and Remix Auth, designed to run seamlessly on Cloudflare Workers.
 
 ## Features
+- 🔐 **TOTP, Google, and GitHub Login**  
+  Supports TOTP authentication, Google login, and GitHub login. TOTP is integrated with Resend for secure email-based verification.
 
 - 🔑 **KV-Based Authentication and Rate Limiting**  
   Efficient session management and rate limiting using Cloudflare KV.
