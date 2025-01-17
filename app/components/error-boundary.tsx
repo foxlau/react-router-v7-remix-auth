@@ -82,7 +82,7 @@ export function GeneralErrorBoundary() {
   const defaultMessage = "Oops! App Crashed 💥";
   const defaultDetails = "Please reload the page. or try again later.";
 
-  // 处理路由错误
+  // Handle route errors, Example: 404, 500, 503
   if (isRouteErrorResponse(error)) {
     const errorConfig = ERROR_STATUS_MAP[error.status];
     const message = errorConfig?.message ?? defaultMessage;
@@ -91,7 +91,7 @@ export function GeneralErrorBoundary() {
     return <ProductionErrorDisplay message={message} details={details} />;
   }
 
-  // 处理开发环境下的错误
+  // Handle development errors
   if (import.meta.env.DEV && error && error instanceof Error) {
     console.log("🔴 error on dev", error);
     return (
@@ -103,7 +103,7 @@ export function GeneralErrorBoundary() {
     );
   }
 
-  // 处理其他未知错误
+  // Handle other errors
   return (
     <ProductionErrorDisplay message={defaultMessage} details={defaultDetails} />
   );
