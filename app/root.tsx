@@ -1,22 +1,33 @@
 import {
   data,
-  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { Toaster } from "sonner";
 
 import type { Route } from "./+types/root";
-import { querySession } from "./auth/auth.server";
+import { GeneralErrorBoundary } from "./components/error-boundary";
 import { ProgressBar } from "./components/progress-bar";
-import {
-  ThemeSwitcherSafeHTML,
-  ThemeSwitcherScript,
-} from "./components/theme-switcher";
 import { useNonce } from "./hooks/use-nonce";
+import { useToast } from "./hooks/use-toast";
+import { querySession } from "./lib/auth/session.server";
+import {
+  ColorSchemeScript,
+  useColorScheme,
+} from "./lib/color-scheme/components";
+import { parseColorScheme } from "./lib/color-scheme/server";
+import { site } from "./lib/config";
+import { requestMiddleware } from "./lib/http.server";
+import { getToast } from "./lib/toast.server";
+import { combineHeaders } from "./lib/utils";
 import stylesheet from "./styles/app.css?url";
+
+export const meta: Route.MetaFunction = ({ error }) => [
+  { title: (error ? "Oops! • " : "") + site.name },
+];
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -33,66 +44,58 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export async function loader({ request }: Route.LoaderArgs) {
+  await requestMiddleware(request);
+
   const { validSession } = await querySession(request);
-  return data({ user: validSession?.user });
+  const { toast, headers: toastHeaders } = await getToast(request);
+  const colorScheme = await parseColorScheme(request);
+
+  return data(
+    {
+      user: validSession?.user,
+      toast,
+      colorScheme,
+    },
+    { headers: combineHeaders(toastHeaders) },
+  );
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const nonce = useNonce();
+  const colorScheme = useColorScheme();
 
   return (
-    <ThemeSwitcherSafeHTML
+    <html
       lang="en"
-      className="touch-manipulation overflow-x-hidden"
+      className={`${colorScheme === "dark" ? "dark" : ""} touch-manipulation overflow-x-hidden`}
+      suppressHydrationWarning
     >
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <Meta />
         <Links />
-        <ThemeSwitcherScript nonce={nonce} />
+        <ColorSchemeScript nonce={nonce} />
       </head>
       <body>
         <ProgressBar />
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
+        <Toaster richColors position="top-center" theme={colorScheme} />
       </body>
-    </ThemeSwitcherSafeHTML>
+    </html>
   );
 }
 
-export default function App() {
+export default function App({ loaderData }: Route.ComponentProps) {
+  useToast(loaderData.toast);
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
-
-  if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
-  }
-
-  return (
-    <main className="container mx-auto space-y-4 p-4 pt-16">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">{message}</h1>
-        <p>{details}</p>
-      </div>
-      {stack && (
-        <pre className="w-full overflow-x-auto rounded-lg bg-destructive/5 p-4 text-sm text-destructive">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
-  );
+export function ErrorBoundary() {
+  return <GeneralErrorBoundary />;
 }
