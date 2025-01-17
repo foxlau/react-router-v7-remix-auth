@@ -5,7 +5,9 @@
 
 import { redirect } from "react-router";
 import { Strategy } from "remix-auth/strategy";
-import { auth, getSessionFromCookie } from "../auth.server";
+import { redirectWithToast } from "../../toast.server";
+import { auth } from "../auth.server";
+import { getSessionFromCookie } from "../session.server";
 import {
   generateVerification,
   Verification,
@@ -22,9 +24,12 @@ export interface SendTOTPOptions {
 
 export type SendTOTP = (options: SendTOTPOptions) => Promise<void>;
 
+export type ValidateEmail = (email: string) => Promise<boolean>;
+
 export interface TOTPStrategyOptions {
-  verifyStorage: KVNamespace;
+  kv: KVNamespace;
   sendTOTP: SendTOTP;
+  validateEmail: ValidateEmail;
 }
 
 export interface TOTPVerifyParams {
@@ -48,38 +53,41 @@ export function toOptionalString(value: unknown) {
 export class TOTPStrategy<User> extends Strategy<User, TOTPVerifyParams> {
   public name = "totp";
 
-  private readonly verifyStorage: KVNamespace;
+  private readonly kv: KVNamespace;
   private readonly sendTOTP: SendTOTP;
+  private readonly validateEmail: ValidateEmail;
 
   constructor(
     options: TOTPStrategyOptions,
     verify: Strategy.VerifyFunction<User, TOTPVerifyParams>,
   ) {
     super(verify);
-    this.verifyStorage = options.verifyStorage;
+    this.kv = options.kv;
     this.sendTOTP = options.sendTOTP;
+    this.validateEmail = options.validateEmail;
   }
 
   async authenticate(request: Request): Promise<User> {
     const { session, sessionUser } = await getSessionFromCookie(request);
 
     // 1. Check if user is already logged in
-    if (sessionUser) return sessionUser;
+    if (sessionUser) throw new Error("User already logged in");
 
     const formData = await request.clone().formData();
     const formDataEmail = toNonEmptyString(formData.get("email"));
     const formDataCode = toNonEmptyString(formData.get("code"));
+    const formDataIntent = toNonEmptyString(formData.get("intent"));
     const sessionEmail = toOptionalString(session.get("auth:email"));
 
     // 2. Verify code
     if (sessionEmail && formDataCode) {
-      const isValid = await verifyCode(
-        this.verifyStorage,
+      const isValidCode = await verifyCode(
+        this.kv,
         Verification.Type.EMAIL,
         sessionEmail,
         formDataCode,
       );
-      if (isValid) {
+      if (isValidCode) {
         return this.verify({ email: sessionEmail, formData, request });
       }
       throw new Error("Invalid code");
@@ -87,35 +95,32 @@ export class TOTPStrategy<User> extends Strategy<User, TOTPVerifyParams> {
 
     // 3. Send verification code
     const email = formDataEmail ?? sessionEmail;
-    if (!email) {
-      throw new Error("Please enter an email address");
-    }
+    if (!email) throw new Error("Email is required");
 
     // Validate email format only when sending the first verification code
-    if (!this.validateEmail(email)) {
-      throw new Error("Invalid email format");
-    }
+    const isValidEmail = await this.validateEmail(email);
+    if (!isValidEmail) throw new Error("Invalid email address");
 
     const code = await generateVerification(
-      this.verifyStorage,
+      this.kv,
       Verification.Type.EMAIL,
       email,
     );
 
     await this.sendTOTP({ email, code, request, formData });
 
-    session.set("auth:email", email);
-    session.flash("auth:notice", "Verification code sent");
+    if (formDataIntent === "resend") {
+      throw await redirectWithToast("/auth/verify", {
+        title: "Verification code sent",
+        type: "success",
+      });
+    }
 
+    session.set("auth:email", email);
     throw redirect("/auth/verify", {
       headers: {
         "Set-Cookie": await auth.commitSession(session),
       },
     });
-  }
-
-  private validateEmail(email: string) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
   }
 }
