@@ -1,35 +1,33 @@
-# React Router v7 with Remix Auth.
+# React Router v7 with Remix Auth Starter Kit
 
-A production-ready authentication template featuring React Router v7 and Remix Auth, demonstrating multiple authentication strategies:
-
-- **OAuth2 Authentication**: Supports GitHub and Google login
-- **TOTP Verification**: Implements secure email verification with Time-based One-Time Password
-  - Rate limiting and cooldown periods
-  - Configurable attempt limits
-  - Auto-expiring verification codes
-  - Protection against brute force attacks
-
-Built with Drizzle ORM and D1, optimized for Cloudflare Workers deployment.
+An introductory starter kit for building applications with React Router v7 (Remix) and Remix Auth, designed to run seamlessly on Cloudflare Workers.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 [TailwindCSS](https://tailwindcss.com/) and [Shadcn](https://ui.shadcn.com/) for UI styling
-- 🔑 [Remix Auth](https://github.com/sergiodxa/remix-auth) for authentication
-- 🌧️ [Drizzle ORM](https://orm.drizzle.team/) for database
-- 🛢️ Cloudflare D1 for database
-- 📁 Cloudflare KV for caching
-- 📖 [React Router docs](https://reactrouter.com/)
+- 🔑 **KV-Based Authentication and Rate Limiting**  
+  Efficient session management and rate limiting using Cloudflare KV.
+
+- 🛢️ **Drizzle ORM + Cloudflare D1**  
+  Seamless database integration with Drizzle ORM and Cloudflare D1.
+
+- 🌗 **Dynamic Color Schemes**  
+  Supports theme customization with color scheme switching.
+
+- 🎨 **TailwindCSS + Shadcn UI**  
+  Modern and customizable UI styling with TailwindCSS and Shadcn components.
+
+- 🧪 **Biome.js for Code Quality**  
+  Ensures high-quality code with integrated linting and formatting.
+
+- 🚀 **Cloudflare Workers-Ready**  
+  Optimized for deployment on Cloudflare Workers.
+
 
 ## Links
 
-React Router v7 Authentication Demo Series:
-- [React Router v7 with Better Auth](https://github.com/foxlau/react-router-v7-better-auth) - Authentication demo using Better Auth package
-- [React Router v7 with Remix Auth](https://github.com/foxlau/react-router-v7-remix-auth) - Multi-strategy authentication demo using Remix Auth
+More from the React Router v7 Series:
+- [React Router v7 with Better Auth](https://github.com/foxlau/react-router-v7-better-auth) - Authentication demo using Better Auth package.
+- [React Router v7 Cloudflare workers template](https://github.com/foxlau/react-router-v7-cloudflare-workers) - React Router v7 Cloudflare workers template.
 
 ## Getting Started
 
@@ -79,7 +77,7 @@ Deployment is done using the Wrangler CLI.
 
 ```bash
 npx wrangler d1 create rr7-remix-auth
-npx wrangler kv namespace create AUTH_VERIFICATION_KV
+npx wrangler kv namespace create APP_KV
 ```
 
 To deploy directly to production:
