@@ -14,11 +14,8 @@ export const getDatabaseFromContext = () => {
         store.env.ENVIRONMENT === "development"
           ? {
               logQuery: (query, params) => {
-                console.log("\n\x1b[36m🔍 SQL Query\x1b[0m");
-                console.log(`\x1b[33m${query}\x1b[0m`);
-                if (params && Object.keys(params).length) {
-                  console.log(`\x1b[32mParameters: ${params}\x1b[0m`);
-                }
+                console.log(query);
+                console.log(params);
               },
             }
           : false,

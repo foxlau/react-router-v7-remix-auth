@@ -9,17 +9,20 @@ export function lower(column: AnySQLiteColumn): SQL {
 export function cuid<Name extends string>(name: Name, indexName?: string) {
   return text(name, { mode: "text", length: 24 })
     .unique(indexName)
-    .notNull()
-    .$defaultFn(() => createId());
+    .$defaultFn(() => createId())
+    .notNull();
+}
+
+export function timestamp<Name extends string>(name: Name) {
+  return integer(name, { mode: "timestamp" });
 }
 
 export const autoIncrementId = {
-  id: integer().primaryKey({ autoIncrement: true }),
+  id: integer("id").primaryKey({ autoIncrement: true }),
 };
 
-export const withTimestamps = {
-  created_at: integer({ mode: "timestamp" })
-    .default(sql`(unixepoch())`)
-    .notNull(),
-  updated_at: integer({ mode: "timestamp" }).$onUpdate(() => new Date()),
-};
+export const createdAt = timestamp("created_at")
+  .default(sql`(unixepoch())`)
+  .notNull();
+
+export const updatedAt = timestamp("updated_at").$onUpdate(() => new Date());

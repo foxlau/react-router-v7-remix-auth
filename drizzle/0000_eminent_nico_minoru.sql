@@ -15,7 +15,7 @@ CREATE TABLE `accounts` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `accounts_id_unique` ON `accounts` (`id`);--> statement-breakpoint
-CREATE INDEX `accounts_provider_idx` ON `accounts` (`provider`);--> statement-breakpoint
+CREATE INDEX `accounts_user_id_idx` ON `accounts` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `accounts_provider_account_unq` ON `accounts` (`provider`,`provider_account_id`);--> statement-breakpoint
 CREATE TABLE `passwords` (
 	`user_id` text NOT NULL,
@@ -23,20 +23,7 @@ CREATE TABLE `passwords` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `passwords_user_id_unique` ON `passwords` (`user_id`);--> statement-breakpoint
-CREATE TABLE `sessions` (
-	`id` text(24) NOT NULL,
-	`user_id` text NOT NULL,
-	`country` text,
-	`ip_address` text,
-	`user_agent` text,
-	`expires_at` integer NOT NULL,
-	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	`updated_at` integer,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE UNIQUE INDEX `sessions_id_unique` ON `sessions` (`id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `passwords_user_id_unq` ON `passwords` (`user_id`);--> statement-breakpoint
 CREATE TABLE `todos` (
 	`id` text(24) NOT NULL,
 	`user_id` text NOT NULL,
@@ -56,7 +43,7 @@ CREATE TABLE `users` (
 	`email` text NOT NULL,
 	`avatar_url` text,
 	`bio` text,
-	`is_active` integer DEFAULT true NOT NULL,
+	`status` text DEFAULT 'active' NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer
 );
