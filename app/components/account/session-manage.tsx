@@ -1,5 +1,8 @@
 import { Monitor, Smartphone, XIcon } from "lucide-react";
+import { useState } from "react";
 import { useFetcher } from "react-router";
+import { useMediaQuery } from "~/hooks/use-media-query";
+import type { loader } from "~/routes/account";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,10 +13,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { Badge } from "~/components/ui/badge";
-import { StatusButton } from "~/components/ui/status-button";
-import type { loader } from "~/routes/account";
+} from "../ui/alert-dialog";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
+import { StatusButton } from "../ui/status-button";
+
+const MODAL_TITLE = "Are you sure?";
+const MODAL_DESCRIPTION = "Clicking continue will sign you out of this device.";
 
 export function SessionManage({
   sessions,
@@ -44,8 +60,35 @@ export function SessionItem({
 }: {
   session: Awaited<ReturnType<typeof loader>>["data"]["sessions"][number];
 }) {
+  const [open, setOpen] = useState(false);
   const fetcher = useFetcher();
   const isPending = fetcher.state !== "idle";
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const handleSignOut = () => {
+    fetcher.submit(
+      {
+        intent: "signOutSession",
+        sessionId: session.id,
+      },
+      {
+        method: "POST",
+        action: "/account",
+        preventScrollReset: true,
+      },
+    );
+    setOpen(false);
+  };
+
+  const logoutButton = (
+    <StatusButton
+      isLoading={isPending}
+      icon={<XIcon aria-hidden="true" />}
+      variant="ghost"
+      size="icon"
+      className="size-6 [&_svg]:text-muted-foreground/60"
+    />
+  );
 
   return (
     <div className="relative flex items-center justify-between rounded-lg border py-4 pl-4 pr-10 shadow-sm shadow-black/5">
@@ -70,45 +113,41 @@ export function SessionItem({
       </div>
       <div className="absolute right-3 top-3">
         {!session.isCurrent ? (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <StatusButton
-                isLoading={isPending}
-                icon={<XIcon aria-hidden="true" />}
-                variant="ghost"
-                size="icon"
-                className="size-6 [&_svg]:text-muted-foreground/60"
-              />
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Clicking continue will sign you out of this device.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    fetcher.submit(
-                      {
-                        intent: "signOutSession",
-                        sessionId: session.id,
-                      },
-                      {
-                        method: "post",
-                        action: "/account",
-                        preventScrollReset: true,
-                      },
-                    );
-                  }}
-                >
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          isDesktop ? (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>{logoutButton}</AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{MODAL_TITLE}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {MODAL_DESCRIPTION}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSignOut}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ) : (
+            <Drawer open={open} onOpenChange={setOpen}>
+              <DrawerTrigger asChild>{logoutButton}</DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader className="text-left">
+                  <DrawerTitle>{MODAL_TITLE}</DrawerTitle>
+                  <DrawerDescription>{MODAL_DESCRIPTION}</DrawerDescription>
+                </DrawerHeader>
+                <DrawerFooter className="pt-2">
+                  <Button onClick={handleSignOut}>Continue</Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+          )
         ) : (
           <Badge
             variant="outline"

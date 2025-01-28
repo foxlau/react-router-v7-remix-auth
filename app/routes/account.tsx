@@ -18,13 +18,14 @@ import { redirectWithToast } from "~/lib/toast.server";
 import { SessionManager } from "~/lib/workers/session-manager.server";
 import type { Route } from "./+types/account";
 
-const schema = z.discriminatedUnion("intent", [
+export const schema = z.discriminatedUnion("intent", [
   z.object({
     intent: z.literal("signOutSession"),
     sessionId: z.string().uuid(),
   }),
   z.object({
     intent: z.literal("deleteUser"),
+    email: z.string({ message: "Email is required" }).email(),
   }),
 ]);
 
@@ -60,14 +61,30 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
+  const redirectPath = "/account";
   const { user, session } = await requireAuth(request);
   const formData = await request.clone().formData();
-  const submission = parseWithZod(formData, { schema });
-  const redirectPath = "/account";
+  const submission = await parseWithZod(formData, {
+    schema: schema.superRefine(async (data, ctx) => {
+      if (data.intent === "deleteUser" && data.email !== user.email) {
+        ctx.addIssue({
+          path: ["email"],
+          code: z.ZodIssueCode.custom,
+          message:
+            "The email address you entered does not match your account's email address.",
+        });
+        return;
+      }
+    }),
+    async: true,
+  });
 
   if (submission.status !== "success") {
     return redirectWithToast(redirectPath, {
-      title: "Something went wrong",
+      title:
+        submission.error?.email?.[0] ||
+        submission.error?.sessionId?.[0] ||
+        "Invalid submission. Please try again",
       type: "error",
     });
   }
