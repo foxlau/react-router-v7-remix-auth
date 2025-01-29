@@ -38,6 +38,7 @@ ENVIRONMENT = "development" # development | production
 
 APP_URL = "http://localhost:5173"
 SESSION_SECRET = "3ebc25b381e87193f29ffea6b6d380dd" # https://generate-secret.vercel.app/32
+HONEYPOT_SECRET="super-duper-s3cret"
 
 GITHUB_CLIENT_ID = "..."
 GITHUB_CLIENT_SECRET = "..."
