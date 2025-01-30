@@ -5,6 +5,7 @@ interface Env {
 	ENVIRONMENT: string;
 	APP_URL: string;
 	SESSION_SECRET: string;
+	HONEYPOT_SECRET: string;
 	GITHUB_CLIENT_ID: string;
 	GITHUB_CLIENT_SECRET: string;
 	GOOGLE_CLIENT_ID: string;

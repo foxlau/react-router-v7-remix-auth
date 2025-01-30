@@ -1,6 +1,7 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form } from "react-router";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
 import { z } from "zod";
 
 import { GithubIcon, GoogleIcon } from "~/components/icons";
@@ -9,6 +10,7 @@ import { Input } from "~/components/ui/input";
 import { StatusButton } from "~/components/ui/status-button";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { auth } from "~/lib/auth/auth.server";
+import { checkHoneypot } from "~/lib/auth/honeypot.server";
 import { handleAuthError, requireAnonymous } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
 import { redirectWithToast } from "~/lib/toast.server";
@@ -38,6 +40,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request, context }: Route.ActionArgs) {
   const formData = await request.clone().formData();
+  await checkHoneypot(context.cloudflare.env, formData);
   const submission = parseWithZod(formData, { schema });
 
   if (submission.status !== "success") {
@@ -79,6 +82,7 @@ export default function LoginRoute() {
       </div>
 
       <Form method="post" className="grid gap-4" {...getFormProps(form)}>
+        <HoneypotInputs />
         <label htmlFor={email.id}>
           <span className="sr-only">Email address</span>
           <Input

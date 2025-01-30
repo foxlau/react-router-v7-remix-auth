@@ -89,6 +89,9 @@ importers:
       remix-auth-oauth2:
         specifier: ^3.2.0
         version: 3.2.2(remix-auth@4.1.0)
+      remix-utils:
+        specifier: ^8.1.0
+        version: 8.1.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.1.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@3.24.1)
       session-context:
         specifier: ^0.0.6
         version: 0.0.6
@@ -3152,6 +3155,33 @@ packages:
     resolution: {integrity: sha512-Xdy42clt+g79GCn+Wl1+B6S/yWnvrStnk62vo1pGuRuUwHC+pjmeEE52ZRkRPuhLGqsQnoDD9TVz/wfEJAGF8g==}
     engines: {node: '>=20.0.0'}
 
+  remix-utils@8.1.0:
+    resolution: {integrity: sha512-k44K4FOPyMv6QQ+yaQrCrXdnzkKE1b86ZUODAK5fvmWsmi7ntZAAA+Ods+nzNAxFEAPDTreCzl7cGWnxWd6ibw==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@oslojs/crypto': ^1.0.1
+      '@oslojs/encoding': ^1.1.0
+      intl-parse-accept-language: ^1.0.0
+      is-ip: ^5.0.1
+      react: ^18.0.0 || ^19.0.0
+      react-router: ^7.0.0
+      zod: ^3.22.4
+    peerDependenciesMeta:
+      '@oslojs/crypto':
+        optional: true
+      '@oslojs/encoding':
+        optional: true
+      intl-parse-accept-language:
+        optional: true
+      is-ip:
+        optional: true
+      react:
+        optional: true
+      react-router:
+        optional: true
+      zod:
+        optional: true
+
   resolve-from@5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
@@ -3395,6 +3425,10 @@ packages:
 
   turbo-stream@2.4.0:
     resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
+
+  type-fest@4.33.0:
+    resolution: {integrity: sha512-s6zVrxuyKbbAsSAD5ZPTB77q4YIdRctkTbJ2/Dqlinwz+8ooH2gd+YA7VA6Pa93KML9GockVvoxjZ2vHP+mu8g==}
+    engines: {node: '>=16'}
 
   typescript@5.7.3:
     resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
@@ -6617,6 +6651,16 @@ snapshots:
 
   remix-auth@4.1.0: {}
 
+  remix-utils@8.1.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.1.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@3.24.1):
+    dependencies:
+      type-fest: 4.33.0
+    optionalDependencies:
+      '@oslojs/crypto': 1.0.1
+      '@oslojs/encoding': 1.1.0
+      react: 19.0.0
+      react-router: 7.1.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      zod: 3.24.1
+
   resolve-from@5.0.0: {}
 
   resolve-pkg-maps@1.0.0: {}
@@ -6887,6 +6931,8 @@ snapshots:
       - yaml
 
   turbo-stream@2.4.0: {}
+
+  type-fest@4.33.0: {}
 
   typescript@5.7.3: {}
 

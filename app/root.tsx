@@ -6,8 +6,10 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { HoneypotProvider } from "remix-utils/honeypot/react";
 import { Toaster } from "sonner";
 
+import { Honeypot } from "remix-utils/honeypot/server";
 import type { Route } from "./+types/root";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { ProgressBar } from "./components/progress-bar";
@@ -43,18 +45,22 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
   await requestMiddleware(request);
 
   const { validSession } = await querySession(request);
   const { toast, headers: toastHeaders } = await getToast(request);
   const colorScheme = await parseColorScheme(request);
+  const honeyProps = await new Honeypot({
+    encryptionSeed: context.cloudflare.env.HONEYPOT_SECRET,
+  }).getInputProps();
 
   return data(
     {
       user: validSession?.user,
       toast,
       colorScheme,
+      honeyProps,
     },
     { headers: combineHeaders(toastHeaders) },
   );
@@ -93,7 +99,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App({ loaderData }: Route.ComponentProps) {
   useToast(loaderData.toast);
-  return <Outlet />;
+  return (
+    <HoneypotProvider {...loaderData.honeyProps}>
+      <Outlet />
+    </HoneypotProvider>
+  );
 }
 
 export function ErrorBoundary() {
