@@ -108,12 +108,24 @@ export function ColorSchemeScript({ nonce }: { nonce: string }) {
   }
 
   return (
-    <script
-      nonce={nonce}
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-      dangerouslySetInnerHTML={{
-        __html: script,
-      }}
-    />
+    <>
+      <meta
+        name="theme-color"
+        media="(prefers-color-scheme: light)"
+        content={colorScheme === "dark" ? "#09090b" : "#ffffff"}
+      />
+      <meta
+        name="theme-color"
+        media="(prefers-color-scheme: dark)"
+        content={colorScheme === "light" ? "#ffffff" : "#09090b"}
+      />
+      <script
+        nonce={nonce}
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+        dangerouslySetInnerHTML={{
+          __html: script,
+        }}
+      />
+    </>
   );
 }

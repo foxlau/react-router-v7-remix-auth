@@ -43,6 +43,32 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
   { rel: "stylesheet", href: stylesheet },
+  { rel: "manifest", href: "/manifest.json" },
+  { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "192x192",
+    href: "/icons/icon-192x192.png",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "256x256",
+    href: "/icons/icon-256x256.png",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "384x384",
+    href: "/icons/icon-384x384.png",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "512x512",
+    href: "/icons/icon-512x512.png",
+  },
 ];
 
 export async function loader({ request, context }: Route.LoaderArgs) {
@@ -82,6 +108,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
+        <meta name="application-name" content={site.name} />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content={site.name} />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="description" content={site.description} />
         <Meta />
         <Links />
         <ColorSchemeScript nonce={nonce} />
