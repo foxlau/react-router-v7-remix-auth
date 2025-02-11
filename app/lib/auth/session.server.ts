@@ -1,6 +1,6 @@
 import { redirect, type Session, type SessionData } from "react-router";
 import { getSessionContext } from "session-context";
-import { db } from "~/database/db.server";
+import { db } from "../db/drizzle.server";
 import { logger } from "../logger";
 import { redirectWithToast } from "../toast.server";
 import { getErrorMessage } from "../utils";

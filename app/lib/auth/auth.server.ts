@@ -4,14 +4,9 @@ import { createCookieSessionStorage, type SessionStorage } from "react-router";
 import { Authenticator } from "remix-auth";
 import { getSessionContext } from "session-context";
 
-import { db } from "~/database/db.server";
-import { lower } from "~/database/helpers";
-import {
-  accountsTable,
-  usersTable,
-  type InsertAccount,
-} from "~/database/schema";
-
+import { db } from "../db/drizzle.server";
+import { lower } from "../db/helpers";
+import { accountsTable, usersTable, type InsertAccount } from "../db/schema";
 import { validateEmail } from "../email/email-validator.server";
 import { sendAuthTotpEmail } from "../email/email.server";
 import { logger } from "../logger";

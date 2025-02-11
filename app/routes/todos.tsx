@@ -8,11 +8,11 @@ import { DeleteTodo } from "~/components/todos/delete-todo";
 import { ToggleTodo } from "~/components/todos/toggle-todo";
 import { Input } from "~/components/ui/input";
 import { StatusButton } from "~/components/ui/status-button";
-import { db } from "~/database/db.server";
-import { todosTable } from "~/database/schema";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { db } from "~/lib/db/drizzle.server";
+import { todosTable } from "~/lib/db/schema";
 import { redirectWithToast } from "~/lib/toast.server";
 import type { Route } from "./+types/todos";
 

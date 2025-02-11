@@ -1,7 +1,7 @@
 {
-  "name": "rr7-remix-auth",
-  "short_name": "rr7",
-  "description": "An introductory starter kit for building applications with React Router v7 (Remix) and Remix Auth, designed to run seamlessly on Cloudflare Workers.",
+  "name": "RRv7",
+  "short_name": "RRv7",
+  "description": "Starter Kit for React Router v7 and Remix Auth on Cloudflare Workers.",
   "start_url": "/",
   "display": "standalone",
   "icons": [
