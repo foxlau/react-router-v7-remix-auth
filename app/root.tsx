@@ -31,46 +31,32 @@ export const meta: Route.MetaFunction = ({ error }) => [
   { title: (error ? "Oops! • " : "") + site.name },
 ];
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-  { rel: "stylesheet", href: stylesheet },
-  { rel: "icon", href: "/favicon.ico" },
-  { rel: "manifest", href: "/manifest.json" },
-  { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
-  {
-    rel: "icon",
-    type: "image/png",
-    sizes: "192x192",
-    href: "/icons/icon-192x192.png",
-  },
-  {
-    rel: "icon",
-    type: "image/png",
-    sizes: "256x256",
-    href: "/icons/icon-256x256.png",
-  },
-  {
-    rel: "icon",
-    type: "image/png",
-    sizes: "384x384",
-    href: "/icons/icon-384x384.png",
-  },
-  {
-    rel: "icon",
-    type: "image/png",
-    sizes: "512x512",
-    href: "/icons/icon-512x512.png",
-  },
-];
+export const links: Route.LinksFunction = () => {
+  const iconVariants = ["192x192", "256x256", "384x384", "512x512"];
+
+  return [
+    { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    },
+    { rel: "stylesheet", href: stylesheet },
+    { rel: "icon", href: "/favicon.ico" },
+    { rel: "manifest", href: "/manifest.json" },
+    { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
+    ...iconVariants.map((size) => ({
+      rel: "icon",
+      type: "image/png",
+      sizes: size,
+      href: `/icons/icon-${size}.png`,
+    })),
+  ];
+};
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await requestMiddleware(request);
