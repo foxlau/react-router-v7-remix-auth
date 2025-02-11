@@ -40,7 +40,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
       <div
         ref={ref}
         className={cn(
-          "h-full w-0 bg-primary duration-500 ease-in-out",
+          "relative h-full w-0 bg-[#2960F6] duration-500 ease-in-out",
           transition.state === "idle" &&
             (animationComplete
               ? "transition-none"
@@ -48,7 +48,9 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
           delayedPending && transition.state === "submitting" && "w-5/12",
           delayedPending && transition.state === "loading" && "w-8/12",
         )}
-      />
+      >
+        <div className="absolute right-0 block h-full w-[100px] -translate-y-1 rotate-[3deg] opacity-100 shadow-[0_0_10px_#2960F6,0_0_5px_#2960F6]" />
+      </div>
       {delayedPending && showSpinner && (
         <div className="absolute right-2 top-2 flex items-center justify-center">
           <Spinner className="h-4 w-4 text-primary" />
