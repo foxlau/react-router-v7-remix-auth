@@ -112,6 +112,12 @@ export default function TodosRoute({
     shouldRevalidate: "onInput",
   });
 
+  // Fix this warning by removing the key prop from the Input component
+  // More about this warning: https://github.com/edmundhung/conform/issues/620
+  const { key: titleKey, ...titleProps } = getInputProps(title, {
+    type: "text",
+  });
+
   return (
     <div className="space-y-12">
       <header className="space-y-2">
@@ -130,7 +136,8 @@ export default function TodosRoute({
         >
           <div className="flex items-center gap-2">
             <Input
-              {...getInputProps(title, { type: "text" })}
+              {...titleProps}
+              key={titleKey}
               placeholder="Enter your todo here"
               aria-label="Enter your todo here"
               autoComplete="off"
