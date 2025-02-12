@@ -144,7 +144,7 @@ export default function LoginRoute() {
         </Button>
       </Form>
 
-      <div className="text-balance text-xs text-muted-foreground [&_a]:underline hover:[&_a]:text-primary">
+      <div className="text-balance text-xs text-muted-foreground [&_a]:underline [&_a]:hover:text-primary">
         By continuing, you agree to our{" "}
         <a href="/" rel="nofollow noreferrer" target="_blank">
           Terms of Service

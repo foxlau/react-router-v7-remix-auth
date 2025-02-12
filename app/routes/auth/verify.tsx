@@ -111,7 +111,7 @@ export default function VerifyRoute({
         />
       </Form>
 
-      <p className="text-balance text-xs text-muted-foreground [&_a]:underline hover:[&_a]:text-primary">
+      <p className="text-balance text-xs text-muted-foreground [&_a]:underline [&_a]:hover:text-primary">
         No code received?{" "}
         <a
           href="/auth/verify"
