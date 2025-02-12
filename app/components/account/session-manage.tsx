@@ -91,7 +91,7 @@ export function SessionItem({
   );
 
   return (
-    <div className="relative flex items-center justify-between rounded-lg border py-4 pl-4 pr-10 shadow-sm shadow-black/5">
+    <div className="relative flex items-center justify-between rounded-lg border py-4 pl-4 pr-10 shadow-xs shadow-black/5">
       <div className="flex items-start gap-2">
         <div className="mt-1 hidden sm:block">
           {session.isMobile ? (
