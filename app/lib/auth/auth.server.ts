@@ -1,11 +1,10 @@
 import { createId } from "@paralleldrive/cuid2";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { createCookieSessionStorage, type SessionStorage } from "react-router";
 import { Authenticator } from "remix-auth";
 import { getSessionContext } from "session-context";
 
 import { db } from "../db/drizzle.server";
-import { lower } from "../db/helpers";
 import { accountsTable, usersTable, type InsertAccount } from "../db/schema";
 import { validateEmail } from "../email/email-validator.server";
 import { sendAuthTotpEmail } from "../email/email.server";
@@ -192,12 +191,11 @@ export async function handleUserAuth(profile: AuthProfile) {
   let username = email.substring(0, email.indexOf("@"));
   displayName = displayName || username;
 
-  // Find existing user and provider
+  // Check if user exists
   const existingUser = await db
     .select({
       id: usersTable.id,
       email: usersTable.email,
-      username: usersTable.username,
       status: usersTable.status,
       provider: accountsTable.provider,
     })
@@ -209,9 +207,7 @@ export async function handleUserAuth(profile: AuthProfile) {
         eq(accountsTable.provider, provider),
       ),
     )
-    .where(
-      or(eq(lower(usersTable.email), email), eq(usersTable.username, username)),
-    )
+    .where(eq(usersTable.email, email))
     .get();
 
   // Handle existing user
@@ -240,16 +236,22 @@ export async function handleUserAuth(profile: AuthProfile) {
 
       return existingUser.id;
     }
+  }
 
-    // If username is taken, generate a new one
-    if (existingUser.username === username) {
-      username = `${username}_${Math.random().toString(36).slice(2, 6)}`;
-    }
+  // Check if the username is already taken
+  const userId = createId();
+  const usernameCheck = await db
+    .select({ username: usersTable.username })
+    .from(usersTable)
+    .where(eq(usersTable.username, username))
+    .get();
+
+  if (usernameCheck) {
+    username = `${username}_${userId.slice(0, 6)}`;
   }
 
   // Create new user and provider association
   try {
-    const userId = createId();
     await db.batch([
       db
         .insert(usersTable)
