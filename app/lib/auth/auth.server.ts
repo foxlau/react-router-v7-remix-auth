@@ -188,7 +188,9 @@ export async function handleUserAuth(profile: AuthProfile) {
   }
 
   email = email.toLowerCase();
-  let username = email.substring(0, email.indexOf("@"));
+  let username = email
+    .substring(0, email.indexOf("@"))
+    .replace(/[^0-9a-z]/g, "_");
   displayName = displayName || username;
 
   // Check if user exists
