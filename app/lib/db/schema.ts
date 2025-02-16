@@ -30,10 +30,10 @@ export const usersTable = sqliteTable(
     createdAt,
     updatedAt,
   },
-  (t) => ({
-    usernameUnqIdx: uniqueIndex("users_username_unq_idx").on(t.username),
-    emailUnqIdx: uniqueIndex("users_email_unq_idx").on(t.email),
-  }),
+  (t) => [
+    uniqueIndex("users_username_unq_idx").on(t.username),
+    uniqueIndex("users_email_unq_idx").on(t.email),
+  ],
 );
 
 export const accountsTable = sqliteTable(
@@ -57,13 +57,10 @@ export const accountsTable = sqliteTable(
     createdAt,
     updatedAt,
   },
-  (t) => ({
-    userIdIdx: index("accounts_user_id_idx").on(t.userId),
-    providerAccountUnq: unique("accounts_provider_account_unq").on(
-      t.provider,
-      t.providerAccountId,
-    ),
-  }),
+  (t) => [
+    index("accounts_user_id_idx").on(t.userId),
+    unique("accounts_provider_account_unq").on(t.provider, t.providerAccountId),
+  ],
 );
 
 export const passwordsTable = sqliteTable(
@@ -74,9 +71,7 @@ export const passwordsTable = sqliteTable(
       .notNull(),
     hash: text("hash", { mode: "text" }).notNull(),
   },
-  (t) => ({
-    userIdUnq: unique("passwords_user_id_unq").on(t.userId),
-  }),
+  (t) => [unique("passwords_user_id_unq").on(t.userId)],
 );
 
 export const todosTable = sqliteTable(
@@ -91,9 +86,7 @@ export const todosTable = sqliteTable(
     createdAt,
     updatedAt,
   },
-  (t) => ({
-    userIdIndex: index("todos_user_id_idx").on(t.userId),
-  }),
+  (t) => [index("todos_user_id_idx").on(t.userId)],
 );
 
 /**
