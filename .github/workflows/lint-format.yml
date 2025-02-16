@@ -1,0 +1,45 @@
+name: Lint and Format
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'workers/**'
+      - '*.json'
+      - '*.js'
+      - '*.ts'
+      - '*.tsx'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'workers/**'
+      - '*.json'
+      - '*.js'
+      - '*.ts'
+      - '*.tsx'
+
+jobs:
+  lint-format:
+    name: ⬣ Lint and Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run lint
+        run: npm run lint
+        
+      - name: Run format check
+        run: npm run format
