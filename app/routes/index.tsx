@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from "lucide-react";
-import { Link } from "react-router";
+import { Link, href } from "react-router";
 import { GithubIcon, ReactRouterIcon } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 
@@ -26,16 +26,15 @@ export default function IndexRoute() {
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button variant="outline" className="rounded-full" asChild>
-              <Link
-                to="https://github.com/foxlau/react-router-v7-remix-auth"
-                reloadDocument
+              <a
+                href="https://github.com/foxlau/react-router-v7-remix-auth"
               >
                 <GithubIcon />
                 Star us on Github
-              </Link>
+              </a>
             </Button>
             <Button className="rounded-full" asChild>
-              <Link to="/auth/login">
+              <Link to={href("/auth/login")}>
                 Get Started <ArrowRightIcon className="size-4" />
               </Link>
             </Button>

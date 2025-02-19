@@ -1,5 +1,5 @@
 import { HouseIcon, PlusIcon } from "lucide-react";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, href } from "react-router";
 import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { buttonVariants } from "~/components/ui/button";
 import {
@@ -16,7 +16,7 @@ export default function Layout() {
       <header className="relative flex w-full items-center justify-between px-4 py-4 sm:px-6">
         <div>
           <Link
-            to="/home"
+            to={href("/home")}
             className={buttonVariants({ variant: "ghost", size: "icon" })}
           >
             <HouseIcon />
@@ -27,7 +27,7 @@ export default function Layout() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  to="/todos"
+                  to={href("/todos")}
                   className={buttonVariants({ variant: "ghost", size: "icon" })}
                 >
                   <PlusIcon />

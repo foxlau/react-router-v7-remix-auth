@@ -1,6 +1,6 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { data, Form, Link, redirect, useSubmit } from "react-router";
+import { data, Form, Link, redirect, useSubmit, href } from "react-router";
 import { HoneypotInputs } from "remix-utils/honeypot/react";
 import { z } from "zod";
 
@@ -28,7 +28,7 @@ export const meta: Route.MetaFunction = () => [
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await auth.getSession(request.headers.get("Cookie"));
   const authEmail = session.get("auth:email");
-  if (!authEmail) throw redirect("/auth/login");
+  if (!authEmail) throw redirect(href("/auth/login"));
 
   const headers = { "Set-Cookie": await auth.commitSession(session) };
   return data({ authEmail }, { headers });
@@ -114,7 +114,7 @@ export default function VerifyRoute({
       <p className="text-balance text-xs text-muted-foreground [&_a]:underline hover:[&_a]:text-primary">
         No code received?{" "}
         <a
-          href="/auth/verify"
+          href={href("/auth/verify")}
           className="underline hover:underline"
           aria-label="Resend code"
           onClick={resend}
@@ -122,7 +122,7 @@ export default function VerifyRoute({
           Resend
         </a>
         {" or "}
-        <Link to="/auth/login" aria-label="Change email">
+        <Link to={href("/auth/login")} aria-label="Change email">
           change email
         </Link>
       </p>

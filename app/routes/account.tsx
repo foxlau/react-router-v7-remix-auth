@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { format, formatDistanceToNow } from "date-fns";
 import { eq } from "drizzle-orm";
-import { data } from "react-router";
+import { data, href } from "react-router";
 import { UAParser } from "ua-parser-js";
 import { z } from "zod";
 
@@ -61,7 +61,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const redirectPath = "/account";
+  const redirectPath = href("/account");
   const { user, session } = await requireAuth(request);
   const formData = await request.clone().formData();
   const submission = await parseWithZod(formData, {
@@ -112,7 +112,7 @@ export async function action({ request, context }: Route.ActionArgs) {
         auth.getSession(request.headers.get("Cookie")),
       ]);
       return redirectWithToast(
-        "/auth/login",
+        href("/auth/login"),
         {
           title: "Your account has been deleted",
           type: "success",
