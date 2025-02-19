@@ -1,9 +1,9 @@
-import { redirect } from "react-router";
+import { redirect, href } from "react-router";
 import { logout } from "~/lib/auth/session.server";
 import type { Route } from "./+types/logout";
 
 export async function loader() {
-  return redirect("/auth/login");
+  return redirect(href("/auth/login"));
 }
 
 export async function action({ request, context }: Route.ActionArgs) {

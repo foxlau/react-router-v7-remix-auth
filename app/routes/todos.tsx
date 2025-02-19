@@ -1,7 +1,7 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { and, eq, sql } from "drizzle-orm";
-import { data, Form } from "react-router";
+import { data, Form, href } from "react-router";
 import { z } from "zod";
 
 import { DeleteTodo } from "~/components/todos/delete-todo";
@@ -49,8 +49,10 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.clone().formData();
   const submission = parseWithZod(formData, { schema });
 
+  const redirect = href("/todos");
+
   if (submission.status !== "success") {
-    return redirectWithToast("/todos", {
+    return redirectWithToast(redirect, {
       title: "Invalid submission. Please try again",
       type: "error",
     });
@@ -85,7 +87,7 @@ export async function action({ request }: Route.ActionArgs) {
       break;
     }
     default:
-      return redirectWithToast("/todos", {
+      return redirectWithToast(redirect, {
         title: "Something went wrong",
         type: "error",
       });
@@ -98,8 +100,9 @@ export default function TodosRoute({
   loaderData: { todos },
   actionData,
 }: Route.ComponentProps) {
+
   const isAdding = useIsPending({
-    formAction: "/todos",
+    formAction: href("/todos"),
     formMethod: "POST",
   });
 
