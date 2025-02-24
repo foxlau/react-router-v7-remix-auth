@@ -5,17 +5,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
+  pull_request:
     branches:
       - main
     paths:
-      - 'app/**'
-      - 'workers/**'
-      - '*.js'
-      - '*.ts'
-      - '*.tsx'
-  pull_request:
-    branches:
       - 'app/**'
       - 'workers/**'
       - '*.js'
