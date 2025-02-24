@@ -19,11 +19,11 @@ export default [
   // Auth
   ...prefix("auth", [
     layout("routes/auth/layout.tsx", [
-      route(":provider/callback", "routes/auth/provider-callback.tsx"),
+      route(":provider/callback", "routes/auth/provider-callback.ts"),
       route("login", "routes/auth/login.tsx"),
       route("verify", "routes/auth/verify.tsx"),
     ]),
-    route("logout", "routes/auth/logout.tsx"),
+    route("logout", "routes/auth/logout.ts"),
   ]),
 
   // API
