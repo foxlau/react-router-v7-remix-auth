@@ -26,6 +26,15 @@ export class SessionManager {
   ) {}
 
   /**
+   * Get user prefix for KV storage
+   * @param userId User ID
+   * @returns Generated KV prefix
+   */
+  private getUserPrefix(userId: string): string {
+    return `${SessionManager.PRIVATE_PREFIX}:${userId}:`;
+  }
+
+  /**
    * Generate session storage key
    * Format: session:{userId}:{sessionId}
    * @param userId User ID
@@ -33,7 +42,7 @@ export class SessionManager {
    * @returns Generated KV key
    */
   private getSessionKey(userId: string, sessionId: string) {
-    return `${SessionManager.PRIVATE_PREFIX}:${userId}:${sessionId}`;
+    return `${this.getUserPrefix(userId)}${sessionId}`;
   }
 
   /**
@@ -103,8 +112,7 @@ export class SessionManager {
   async listUserSessions(userId: string): Promise<{
     sessions: Array<SessionData>;
   }> {
-    // Construct KV key prefix for listing all user sessions
-    const prefix = `${SessionManager.PRIVATE_PREFIX}:${userId}:`;
+    const prefix = this.getUserPrefix(userId);
     // List all keys matching the prefix from KV
     const { keys } = await this.kv.list({ prefix });
 
@@ -130,8 +138,7 @@ export class SessionManager {
    * @param userId User ID
    */
   async deleteUserSessions(userId: string): Promise<void> {
-    // Construct KV key prefix for listing all user sessions
-    const prefix = `${SessionManager.PRIVATE_PREFIX}:${userId}:`;
+    const prefix = this.getUserPrefix(userId);
     // List all keys matching the prefix from KV
     const { keys } = await this.kv.list({ prefix });
     // Delete all matching session data
@@ -147,12 +154,10 @@ export class SessionManager {
     userId: string,
     currentSessionId: string,
   ): Promise<void> {
-    // Construct KV key prefix for listing all user sessions
-    const prefix = `${SessionManager.PRIVATE_PREFIX}:${userId}:`;
-    // List all keys matching the prefix from KV
+    const prefix = this.getUserPrefix(userId);
     const { keys } = await this.kv.list({ prefix });
-
     const deletePromises: Promise<void>[] = [];
+
     // Iterate through all matching keys
     for (const keyInfo of keys) {
       // Extract session ID from key name
@@ -207,5 +212,16 @@ export class SessionManager {
     });
 
     return true;
+  }
+
+  /**
+   * Get total number of active sessions for a user
+   * @param userId User ID
+   * @returns Number of active sessions
+   */
+  async getUserSessionCount(userId: string): Promise<number> {
+    const prefix = this.getUserPrefix(userId);
+    const { keys } = await this.kv.list({ prefix });
+    return keys.length;
   }
 }
