@@ -26,23 +26,29 @@ jobs:
   lint-format:
     name: ⬣ Lint and Format
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pnpm: [9.15.5]
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-      
-      - name: Set up Node.js
+      - name: 🟢 Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-          
-      - name: Install dependencies
+      
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ matrix.pnpm }}
+      
+      - name: 📎 Install dependencies
         run: pnpm install
         
-      - name: Run lint
+      - name: 🔍 Run lint
         run: pnpm lint
         
-      - name: Run format check
+      - name: 🎨 Run format check
         run: pnpm format
