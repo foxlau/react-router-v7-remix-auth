@@ -47,7 +47,7 @@
     "remix-auth-oauth2": "^3.2.2",
     "remix-utils": "^8.1.0",
     "session-context": "^0.0.6",
-    "sonner": "^1.7.4",
+    "sonner": "^2.0.1",
     "spin-delay": "^2.0.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
