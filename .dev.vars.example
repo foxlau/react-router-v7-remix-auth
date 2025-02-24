@@ -1,0 +1,12 @@
+ENVIRONMENT = "development" # development | production
+
+APP_URL = "http://localhost:5173"
+SESSION_SECRET = "3ebc25b381e87193f29ffea6b6d380dd"
+
+GITHUB_CLIENT_ID = "..."
+GITHUB_CLIENT_SECRET = "..."
+
+GOOGLE_CLIENT_ID = "..."
+GOOGLE_CLIENT_SECRET = "..."
+
+RESEND_API_KEY = "..."

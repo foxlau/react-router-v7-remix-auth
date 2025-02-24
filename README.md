@@ -26,7 +26,7 @@ An introductory starter kit for building applications with React Router v7 (Remi
 
 ## Demo
 
-Here’s a preview of the app:
+Here's a preview of the app:
 
 <div style="display: flex;">
   <img src="./.assets/login.png" width="45%" />
@@ -59,6 +59,14 @@ npm install
 ```
 
 ### Development
+
+First, copy the .dev.vars.example file and rename it to .dev.vars:
+
+```bash
+cp .dev.vars.example .dev.vars
+```
+
+Update the environment variables in the .dev.vars file according to your needs. These variables will be used by Wrangler during local development.
 
 Run an initial database migration:
 
