@@ -1,0 +1,17 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint
+      glob: "*.{js,jsx,ts,tsx}"
+      run: pnpm run lint {staged_files}
+    - name: format
+      glob: "*.{js,jsx,ts,tsx,json,css,md,yml}"
+      run: pnpm run format {staged_files}
+    - name: typecheck
+      glob: "*.{ts,tsx}"
+      run: pnpm run typecheck
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: pnpm commitlint --edit {1}
