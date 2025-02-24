@@ -1,4 +1,8 @@
-name: Lint and Format
+name: 🚀 Pull Request
+
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
@@ -12,8 +16,6 @@ on:
       - '*.tsx'
   pull_request:
     branches:
-      - main
-    paths:
       - 'app/**'
       - 'workers/**'
       - '*.js'
@@ -21,12 +23,9 @@ on:
       - '*.tsx'
 
 jobs:
-  lint-format:
-    name: ⬣ Lint and Format
+  quality:
+    name: ⬣ Lint, Format & Type Check
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        pnpm: [9.15.5]
     
     steps:
       - name: 📥 Checkout
@@ -40,13 +39,19 @@ jobs:
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: ${{ matrix.pnpm }}
+          version: 9.15.5
       
       - name: 📎 Install dependencies
         run: pnpm install
         
-      - name: 🔍 Run lint
-        run: pnpm lint
+      - name: 🔧 Generate Types
+        run: pnpm typegen
         
       - name: 🎨 Run format check
         run: pnpm format
+        
+      - name: 🔍 Run lint
+        run: pnpm lint
+        
+      - name: 📝 Run type check
+        run: pnpm typecheck
