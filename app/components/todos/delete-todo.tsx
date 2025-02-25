@@ -26,15 +26,7 @@ export function DeleteTodo({ todoId }: { todoId: string }) {
         disabled={isDeleting}
         {...getButtonProps()}
       >
-        {doubleCheck ? (
-          isDeleting ? (
-            <Spinner className="size-2" />
-          ) : (
-            <CheckIcon className="size-2" />
-          )
-        ) : (
-          <XIcon className="size-2" />
-        )}
+        {doubleCheck ? isDeleting ? <Spinner /> : <CheckIcon /> : <XIcon />}
       </Button>
     </fetcher.Form>
   );

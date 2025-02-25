@@ -25,7 +25,7 @@ export default function IndexRoute() {
             Cloudflare Workers.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button variant="outline" className="rounded-full" asChild>
+            <Button variant="outline" size="lg" asChild>
               <Link
                 to="https://github.com/foxlau/react-router-v7-remix-auth"
                 reloadDocument
@@ -34,7 +34,7 @@ export default function IndexRoute() {
                 Star us on Github
               </Link>
             </Button>
-            <Button className="rounded-full" asChild>
+            <Button size="lg" asChild>
               <Link to="/auth/login">
                 Get Started <ArrowRightIcon className="size-4" />
               </Link>

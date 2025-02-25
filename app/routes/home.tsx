@@ -31,7 +31,7 @@ function NavLinks({ links }: { links: NavLink[] }) {
         <li key={link.to}>
           <Link
             to={link.to}
-            className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-semibold shadow-black/5 shadow-sm outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
+            className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-semibold shadow-black/5 shadow-sm outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
           >
             <div className="flex items-center gap-2">
               <link.icon size={20} className="shrink-0 opacity-60" />

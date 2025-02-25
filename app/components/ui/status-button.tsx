@@ -1,6 +1,16 @@
-import React from "react";
-import { Button, type ButtonProps } from "./button";
+import type { VariantProps } from "class-variance-authority";
+import React, { type ComponentProps } from "react";
+import { Button, type buttonVariants } from "./button";
 import { Spinner } from "./spinner";
+
+type ButtonProps = ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    formProps?: {
+      name?: string;
+      value?: string;
+    };
+  };
 
 interface StatusButtonProps extends ButtonProps {
   isLoading: boolean;
@@ -10,9 +20,12 @@ interface StatusButtonProps extends ButtonProps {
 }
 
 const StatusButton = React.forwardRef<HTMLButtonElement, StatusButtonProps>(
-  ({ isLoading = false, text, loadingText, icon, ...props }, ref) => {
+  (
+    { isLoading = false, text, loadingText, icon, formProps, ...props },
+    ref,
+  ) => {
     return (
-      <Button ref={ref} disabled={isLoading} {...props}>
+      <Button ref={ref} disabled={isLoading} {...formProps} {...props}>
         {isLoading ? <Spinner className="size-4" /> : icon}
         {isLoading ? (loadingText ?? text) : text}
       </Button>

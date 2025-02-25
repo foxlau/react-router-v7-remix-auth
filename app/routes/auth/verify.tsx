@@ -111,18 +111,22 @@ export default function VerifyRoute({
         />
       </Form>
 
-      <p className="text-balance text-muted-foreground text-xs [&_a]:underline hover:[&_a]:text-primary">
+      <p className="text-balance text-muted-foreground text-xs">
         No code received?{" "}
         <a
           href="/auth/verify"
-          className="underline hover:underline"
+          className="underline hover:text-primary"
           aria-label="Resend code"
           onClick={resend}
         >
           Resend
         </a>
         {" or "}
-        <Link to="/auth/login" aria-label="Change email">
+        <Link
+          to="/auth/login"
+          className="underline hover:text-primary"
+          aria-label="Change email"
+        >
           change email
         </Link>
       </p>

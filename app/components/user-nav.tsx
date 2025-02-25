@@ -41,9 +41,9 @@ export function UserNav() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" forceMount>
+      <DropdownMenuContent align="end" className="min-w-[160px]" forceMount>
         <DropdownMenuLabel className="flex min-w-0 flex-col">
-          <span className="truncate font-medium text-foreground text-sm">
+          <span className="truncate font-semibold text-foreground text-sm">
             {user?.displayName ?? user?.email}
           </span>
           <span className="truncate font-normal text-muted-foreground text-xs">
@@ -54,29 +54,24 @@ export function UserNav() {
 
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => navigate("/")}>
-            <LucideSquareArrowOutUpRight
-              size={16}
-              className="opacity-60"
-              aria-hidden="true"
-            />
+            <LucideSquareArrowOutUpRight size={16} aria-hidden="true" />
             Home page
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => navigate("/account")}>
-            <SettingsIcon size={16} className="opacity-60" aria-hidden="true" />
+            <SettingsIcon size={16} aria-hidden="true" />
             <span>Account</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem
-            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
             onClick={() => {
               setTimeout(() => {
                 submit(null, { method: "POST", action: "/auth/logout" });
               }, 100);
             }}
           >
-            <LogOut size={16} className="opacity-60" aria-hidden="true" />
+            <LogOut size={16} aria-hidden="true" />
             Logout
           </DropdownMenuItem>
         </DropdownMenuGroup>
