@@ -122,7 +122,7 @@ export default function LoginRoute() {
         <Button
           name="intent"
           value="google"
-          variant="secondary"
+          variant="outline"
           className="w-full"
           aria-label="Continue with Google account"
           disabled={isLoggingIn}
@@ -134,7 +134,7 @@ export default function LoginRoute() {
         <Button
           name="intent"
           value="github"
-          variant="secondary"
+          variant="outline"
           className="w-full"
           aria-label="Continue with Github account"
           disabled={isLoggingIn}
@@ -144,13 +144,23 @@ export default function LoginRoute() {
         </Button>
       </Form>
 
-      <div className="text-balance text-muted-foreground text-xs [&_a]:underline hover:[&_a]:text-primary">
+      <div className="text-balance text-muted-foreground text-xs">
         By continuing, you agree to our{" "}
-        <a href="/" rel="nofollow noreferrer" target="_blank">
+        <a
+          href="/"
+          rel="nofollow noreferrer"
+          target="_blank"
+          className="underline hover:text-primary"
+        >
           Terms of Service
         </a>
         {" and "}
-        <a href="/" rel="nofollow noreferrer" target="_blank">
+        <a
+          href="/"
+          rel="nofollow noreferrer"
+          target="_blank"
+          className="underline hover:text-primary"
+        >
           Privacy Policy
         </a>
       </div>

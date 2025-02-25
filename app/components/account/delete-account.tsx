@@ -62,11 +62,7 @@ export function DeleteAccount() {
             <DialogTrigger asChild>
               <Button variant="destructive">Delete account</Button>
             </DialogTrigger>
-            <DialogContent
-              aria-modal="true"
-              aria-labelledby="alert-dialog"
-              className="sm:max-w-[400px]"
-            >
+            <DialogContent aria-modal="true" aria-labelledby="alert-dialog">
               <DialogHeader>
                 <DialogTitle>{MODAL_TITLE}</DialogTitle>
                 <DialogDescription>
