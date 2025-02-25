@@ -42,7 +42,7 @@ export default function Layout() {
           <UserNav />
         </div>
       </header>
-      <main className="mx-auto max-w-screen-sm px-6 pb-36 pt-6">
+      <main className="mx-auto max-w-screen-sm px-6 pt-6 pb-36">
         <Outlet />
       </main>
     </>

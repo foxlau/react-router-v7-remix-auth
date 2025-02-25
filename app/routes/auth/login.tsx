@@ -75,8 +75,8 @@ export default function LoginRoute() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">Welcome back!</h1>
-        <p className="text-balance text-sm text-muted-foreground">
+        <h1 className="font-semibold text-xl">Welcome back!</h1>
+        <p className="text-balance text-muted-foreground text-sm">
           Enter your email to continue
         </p>
       </div>
@@ -94,7 +94,7 @@ export default function LoginRoute() {
           />
           {email.errors && (
             <p
-              className="mt-2 text-xs text-destructive"
+              className="mt-2 text-destructive text-xs"
               role="alert"
               aria-live="polite"
             >
@@ -112,7 +112,7 @@ export default function LoginRoute() {
         />
       </Form>
 
-      <div className="relative text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+      <div className="relative text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
         <span className="relative z-10 bg-background px-2 text-muted-foreground">
           OR
         </span>
@@ -144,7 +144,7 @@ export default function LoginRoute() {
         </Button>
       </Form>
 
-      <div className="text-balance text-xs text-muted-foreground [&_a]:underline hover:[&_a]:text-primary">
+      <div className="text-balance text-muted-foreground text-xs [&_a]:underline hover:[&_a]:text-primary">
         By continuing, you agree to our{" "}
         <a href="/" rel="nofollow noreferrer" target="_blank">
           Terms of Service

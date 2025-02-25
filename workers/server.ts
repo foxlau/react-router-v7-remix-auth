@@ -1,9 +1,9 @@
-import { createRequestHandler, type ServerBuild } from "react-router";
+import { type ServerBuild, createRequestHandler } from "react-router";
 import { runSession } from "session-context";
 
-import { getLoadContext } from "./load-context";
 // @ts-ignore This file won’t exist if it hasn’t yet been built
 import * as build from "../build/server";
+import { getLoadContext } from "./load-context";
 
 const requestHandler = createRequestHandler(build as unknown as ServerBuild);
 

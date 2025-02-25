@@ -1,11 +1,11 @@
-import { redirect, type Session, type SessionData } from "react-router";
+import { type Session, type SessionData, redirect } from "react-router";
 import { getSessionContext } from "session-context";
 import { db } from "../db/drizzle.server";
 import { logger } from "../logger";
 import { redirectWithToast } from "../toast.server";
 import { getErrorMessage } from "../utils";
 import { SessionManager } from "../workers/session-manager.server";
-import { auth, type AuthUserSession } from "./auth.server";
+import { type AuthUserSession, auth } from "./auth.server";
 
 const AUTH_USER_KEY = "auth-user";
 const AUTH_SUCCESS_REDIRECT_TO = "/home";

@@ -49,7 +49,7 @@ export function DeleteAccount() {
   return (
     <div className="space-y-4">
       <header className="space-y-2">
-        <h2 className="text-base font-semibold">{MODAL_TITLE}</h2>
+        <h2 className="font-semibold text-base">{MODAL_TITLE}</h2>
         <p className="text-muted-foreground">
           Once you delete your account, you will not be able to sign in again.
           You will also lose access to your account and any data associated with
@@ -131,7 +131,7 @@ export function DeleteAccountForm({
         />
         {email.errors && (
           <p
-            className="text-xs text-destructive"
+            className="text-destructive text-xs"
             role="alert"
             aria-live="polite"
           >

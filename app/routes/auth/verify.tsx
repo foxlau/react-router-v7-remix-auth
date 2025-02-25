@@ -1,6 +1,6 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { data, Form, Link, redirect, useSubmit } from "react-router";
+import { Form, Link, data, redirect, useSubmit } from "react-router";
 import { HoneypotInputs } from "remix-utils/honeypot/react";
 import { z } from "zod";
 
@@ -70,7 +70,7 @@ export default function VerifyRoute({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">Check your inbox</h1>
+        <h1 className="font-semibold text-xl">Check your inbox</h1>
         <p className="text-balance text-sm">
           <span className="text-muted-foreground">
             Enter the verification code we just sent to
@@ -92,7 +92,7 @@ export default function VerifyRoute({
           />
           {code.errors && (
             <p
-              className="mt-2 text-xs text-destructive"
+              className="mt-2 text-destructive text-xs"
               role="alert"
               aria-live="polite"
             >
@@ -111,7 +111,7 @@ export default function VerifyRoute({
         />
       </Form>
 
-      <p className="text-balance text-xs text-muted-foreground [&_a]:underline hover:[&_a]:text-primary">
+      <p className="text-balance text-muted-foreground text-xs [&_a]:underline hover:[&_a]:text-primary">
         No code received?{" "}
         <a
           href="/auth/verify"

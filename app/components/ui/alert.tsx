@@ -1,13 +1,13 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from "lucide-react";
 
-const alertVariants = cva("border rounded-lg px-3 py-2", {
+const alertVariants = cva("rounded-lg border px-3 py-2", {
   variants: {
     variant: {
-      success: "border-emerald-500/20 text-emerald-600 bg-emerald-500/5",
-      error: "border-red-500/20 text-red-600 bg-red-500/5",
-      warning: "border-amber-500/20 text-amber-600 bg-amber-500/5",
-      info: "border-blue-500/20 text-blue-600 bg-blue-500/5",
+      success: "border-emerald-500/20 bg-emerald-500/5 text-emerald-600",
+      error: "border-red-500/20 bg-red-500/5 text-red-600",
+      warning: "border-amber-500/20 bg-amber-500/5 text-amber-600",
+      info: "border-blue-500/20 bg-blue-500/5 text-blue-600",
     },
   },
   defaultVariants: {

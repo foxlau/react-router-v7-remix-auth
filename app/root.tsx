@@ -1,10 +1,10 @@
 import {
-  data,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  data,
 } from "react-router";
 import { HoneypotProvider } from "remix-utils/honeypot/react";
 import { Toaster } from "sonner";

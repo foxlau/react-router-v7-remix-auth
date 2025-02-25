@@ -1,11 +1,11 @@
 import { createId } from "@paralleldrive/cuid2";
 import { and, eq } from "drizzle-orm";
-import { createCookieSessionStorage, type SessionStorage } from "react-router";
+import { type SessionStorage, createCookieSessionStorage } from "react-router";
 import { Authenticator } from "remix-auth";
 import { getSessionContext } from "session-context";
 
 import { db } from "../db/drizzle.server";
-import { accountsTable, usersTable, type InsertAccount } from "../db/schema";
+import { type InsertAccount, accountsTable, usersTable } from "../db/schema";
 import { validateEmail } from "../email/email-validator.server";
 import { sendAuthTotpEmail } from "../email/email.server";
 import { logger } from "../logger";
@@ -81,7 +81,7 @@ export function createAuth(env: Env): AuthInterface {
     cookie: {
       name: AUTH_SESSION_NAME,
       path: "/",
-      sameSite: "lax",
+      sameSite: "lax", // If you change to "none", you need to set the secure flag to true
       httpOnly: true,
       secrets: [env.SESSION_SECRET ?? "s3cr3t"],
       secure: process.env.NODE_ENV === "production",

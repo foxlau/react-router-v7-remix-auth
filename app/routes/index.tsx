@@ -14,12 +14,12 @@ export default function IndexRoute() {
             <ReactRouterIcon theme="light" className="block w-28 dark:hidden" />
             <ReactRouterIcon theme="dark" className="hidden w-28 dark:block" />
           </div>
-          <div className="text-center text-[clamp(40px,10vw,44px)] font-bold leading-[1.2] tracking-tighter sm:text-[60px]">
-            <div className="leading-10 text-primary sm:leading-[3.5rem]">
+          <div className="text-center font-bold text-[clamp(40px,10vw,44px)] leading-[1.2] tracking-tighter sm:text-[60px]">
+            <div className="text-primary leading-10 sm:leading-[3.5rem]">
               React Router v7 <br /> with Remix auth.
             </div>
           </div>
-          <p className="text-center text-base font-normal sm:w-[466px] sm:text-[18px] sm:leading-7">
+          <p className="text-center font-normal text-base sm:w-[466px] sm:text-[18px] sm:leading-7">
             An introductory starter kit for building applications with React
             Router v7 (Remix) and Remix Auth, designed to run seamlessly on
             Cloudflare Workers.

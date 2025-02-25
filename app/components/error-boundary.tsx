@@ -42,10 +42,10 @@ function DevErrorDisplay({ message, details, stack }: ErrorDisplayProps) {
   return (
     <main className="container mx-auto space-y-4 p-4 pt-16">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">{message}</h1>
+        <h1 className="font-semibold text-2xl">{message}</h1>
         <p className="text-balance text-base">{details}</p>
       </div>
-      <pre className="w-full overflow-x-auto rounded-lg bg-destructive/10 p-4 text-sm text-destructive">
+      <pre className="w-full overflow-x-auto rounded-lg bg-destructive/10 p-4 text-destructive text-sm">
         <code>{stack}</code>
       </pre>
     </main>
@@ -64,7 +64,7 @@ export function ProductionErrorDisplay({
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-xl font-semibold md:text-2xl">{message}</h1>
+          <h1 className="font-semibold text-xl md:text-2xl">{message}</h1>
           <p className="text-base text-muted-foreground">{details}</p>
         </div>
 

@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
-import { sql, type SQL } from "drizzle-orm";
-import { integer, text, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
+import { type SQL, sql } from "drizzle-orm";
+import { type AnySQLiteColumn, integer, text } from "drizzle-orm/sqlite-core";
 
 export function lower(column: AnySQLiteColumn): SQL {
   return sql`lower(${column})`;

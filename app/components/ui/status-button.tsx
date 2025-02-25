@@ -1,5 +1,5 @@
 import React from "react";
-import { type ButtonProps, Button } from "./button";
+import { Button, type ButtonProps } from "./button";
 import { Spinner } from "./spinner";
 
 interface StatusButtonProps extends ButtonProps {

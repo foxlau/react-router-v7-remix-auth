@@ -8,7 +8,7 @@ export function UserProfile({
 }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-base font-semibold">Profile</h2>
+      <h2 className="font-semibold text-base">Profile</h2>
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="shrink-0">
           <Avatar className="size-12">
@@ -20,7 +20,7 @@ export function UserProfile({
               }
               alt={user?.displayName ?? "User avatar"}
             />
-            <AvatarFallback className="text-xs font-bold uppercase">
+            <AvatarFallback className="font-bold text-xs uppercase">
               {user?.displayName?.slice(0, 2)}
             </AvatarFallback>
           </Avatar>

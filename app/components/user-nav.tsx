@@ -35,7 +35,7 @@ export function UserNav() {
               }
               alt={user?.displayName ?? "User avatar"}
             />
-            <AvatarFallback className="text-xs font-bold uppercase">
+            <AvatarFallback className="font-bold text-xs uppercase">
               {user?.displayName?.slice(0, 2)}
             </AvatarFallback>
           </Avatar>
@@ -43,10 +43,10 @@ export function UserNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount>
         <DropdownMenuLabel className="flex min-w-0 flex-col">
-          <span className="truncate text-sm font-medium text-foreground">
+          <span className="truncate font-medium text-foreground text-sm">
             {user?.displayName ?? user?.email}
           </span>
-          <span className="truncate text-xs font-normal text-muted-foreground">
+          <span className="truncate font-normal text-muted-foreground text-xs">
             {user?.email}
           </span>
         </DropdownMenuLabel>

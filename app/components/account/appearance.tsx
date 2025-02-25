@@ -1,10 +1,10 @@
 import { CheckIcon, MinusIcon } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import {
+  type ColorScheme,
   ColorSchemeSchema,
   useColorScheme,
   useSetColorScheme,
-  type ColorScheme,
 } from "~/lib/color-scheme/components";
 import UiDark from "/images/ui-dark.png";
 import UiLight from "/images/ui-light.png";
@@ -23,7 +23,7 @@ export function Appearance() {
   return (
     <div className="space-y-4">
       <header className="space-y-2">
-        <h2 className="text-base font-semibold">Appearance</h2>
+        <h2 className="font-semibold text-base">Appearance</h2>
         <p className="text-muted-foreground">
           Customize the appearance of the app. Automatically switch between day
           and night themes.
@@ -49,7 +49,7 @@ export function Appearance() {
                 alt={value}
                 width={220}
                 height={160}
-                className="relative w-full cursor-pointer overflow-hidden rounded-lg border border-input shadow-sm shadow-black/5 outline-offset-2 transition-colors peer-[:focus-visible]:outline peer-[:focus-visible]:outline-2 peer-[:focus-visible]:outline-ring/70 peer-data-[disabled]:cursor-not-allowed peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent peer-data-[disabled]:opacity-50"
+                className="relative w-full cursor-pointer overflow-hidden rounded-lg border border-input shadow-black/5 shadow-sm outline-offset-2 transition-colors peer-[:focus-visible]:outline peer-[:focus-visible]:outline-2 peer-[:focus-visible]:outline-ring/70 peer-data-[disabled]:cursor-not-allowed peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent peer-data-[disabled]:opacity-50"
               />
               <span className="group mt-2 flex items-center gap-1 peer-data-[state=unchecked]:text-muted-foreground/70">
                 <CheckIcon
@@ -62,7 +62,7 @@ export function Appearance() {
                   className="peer-data-[state=checked]:group-[]:hidden"
                   aria-hidden="true"
                 />
-                <span className="text-xs font-medium capitalize">{value}</span>
+                <span className="font-medium text-xs capitalize">{value}</span>
               </span>
             </label>
           ))}

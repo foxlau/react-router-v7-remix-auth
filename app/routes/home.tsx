@@ -4,7 +4,7 @@ import {
   type LucideIcon,
   UserCogIcon,
 } from "lucide-react";
-import { data, Link } from "react-router";
+import { Link, data } from "react-router";
 import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
 import type { Route } from "./+types/home";
@@ -31,7 +31,7 @@ function NavLinks({ links }: { links: NavLink[] }) {
         <li key={link.to}>
           <Link
             to={link.to}
-            className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-semibold shadow-sm shadow-black/5 outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
+            className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-semibold shadow-black/5 shadow-sm outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
           >
             <div className="flex items-center gap-2">
               <link.icon size={20} className="shrink-0 opacity-60" />
@@ -67,7 +67,7 @@ export default function HomeRoute({
   return (
     <div className="space-y-12">
       <header className="space-y-2">
-        <h2 className="text-xl font-semibold">
+        <h2 className="font-semibold text-xl">
           <span className="mr-2 text-2xl">👋</span> Hi, {user.displayName}!
         </h2>
         <p className="text-base text-muted-foreground">

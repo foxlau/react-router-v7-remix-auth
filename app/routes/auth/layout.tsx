@@ -5,7 +5,7 @@ import { buttonVariants } from "~/components/ui/button";
 export default function AuthLayout() {
   return (
     <div className="flex h-screen w-full items-center justify-center px-6">
-      <div className="fixed left-6 top-6">
+      <div className="fixed top-6 left-6">
         <Link
           to="/"
           className={buttonVariants({ variant: "ghost", size: "icon" })}

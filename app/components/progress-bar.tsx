@@ -35,7 +35,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
     <div
       aria-hidden={delayedPending ? undefined : true}
       aria-valuetext={delayedPending ? "Loading" : undefined}
-      className="fixed inset-x-0 left-0 top-0 z-[99999] h-0.5 animate-pulse"
+      className="fixed inset-x-0 top-0 left-0 z-[99999] h-0.5 animate-pulse"
     >
       <div
         ref={ref}
@@ -49,10 +49,10 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
           delayedPending && transition.state === "loading" && "w-8/12",
         )}
       >
-        <div className="absolute right-0 block h-full w-[100px] -translate-y-1 rotate-[3deg] opacity-100 shadow-[0_0_10px_#2960F6,0_0_5px_#2960F6]" />
+        <div className="-translate-y-1 absolute right-0 block h-full w-[100px] rotate-[3deg] opacity-100 shadow-[0_0_10px_#2960F6,0_0_5px_#2960F6]" />
       </div>
       {delayedPending && showSpinner && (
-        <div className="absolute right-2 top-2 flex items-center justify-center">
+        <div className="absolute top-2 right-2 flex items-center justify-center">
           <Spinner className="h-4 w-4 text-primary" />
         </div>
       )}

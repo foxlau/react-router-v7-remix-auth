@@ -39,7 +39,7 @@ export function SessionManage({
   return (
     <div className="space-y-4">
       <header className="space-y-2">
-        <h2 className="text-base font-semibold">Active sessions</h2>
+        <h2 className="font-semibold text-base">Active sessions</h2>
         <p className="text-muted-foreground">
           If necessary, you can sign out of all other browser sessions. Some of
           your recent sessions are listed below, but this list may not be
@@ -91,7 +91,7 @@ export function SessionItem({
   );
 
   return (
-    <div className="relative flex items-center justify-between rounded-lg border py-4 pl-4 pr-10 shadow-sm shadow-black/5">
+    <div className="relative flex items-center justify-between rounded-lg border py-4 pr-10 pl-4 shadow-black/5 shadow-sm">
       <div className="flex items-start gap-2">
         <div className="mt-1 hidden sm:block">
           {session.isMobile ? (
@@ -102,7 +102,7 @@ export function SessionItem({
         </div>
         <div>
           <p>{session.userAgent}</p>
-          <p className="flex flex-col gap-x-2 text-xs text-muted-foreground sm:flex-row">
+          <p className="flex flex-col gap-x-2 text-muted-foreground text-xs sm:flex-row">
             <span>
               Ip address: {session.ipAddress}{" "}
               {session.country !== "Unknown" && `(${session.country})`}
@@ -111,7 +111,7 @@ export function SessionItem({
           </p>
         </div>
       </div>
-      <div className="absolute right-3 top-3">
+      <div className="absolute top-3 right-3">
         {!session.isCurrent ? (
           isDesktop ? (
             <AlertDialog>
