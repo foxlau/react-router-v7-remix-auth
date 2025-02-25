@@ -1,4 +1,4 @@
-name: 🚀 Pull Request
+name: 🔍 PR Code Validation
 
 concurrency:
   group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
@@ -9,42 +9,45 @@ on:
     branches:
       - main
     paths:
-      - 'app/**'
-      - 'workers/**'
-      - '*.js'
-      - '*.ts'
-      - '*.tsx'
+      - "app/**"
+      - "workers/**"
+      - "*.js"
+      - "*.ts"
+      - "*.tsx"
 
 jobs:
-  quality:
-    name: ⬣ Lint, Format & Type Check
+  lint:
+    name: ⬣ Biome lint
     runs-on: ubuntu-latest
-    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: biomejs/setup-biome@v2
+      - run: biome ci . --reporter=github
+
+  typecheck:
+    needs: lint
+    name: 🔎 Type check
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
-      
-      - name: 🟢 Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
+
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.5
-      
+
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
       - name: 📎 Install dependencies
         run: pnpm install
-        
+
       - name: 🔧 Generate Types
         run: pnpm typegen
-        
-      - name: 🎨 Run format check
-        run: pnpm format
-        
-      - name: 🔍 Run lint
-        run: pnpm lint
-        
+
       - name: 📝 Run type check
         run: pnpm typecheck
