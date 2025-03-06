@@ -14,20 +14,10 @@ import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
 import { db } from "~/lib/db/drizzle.server";
 import { usersTable } from "~/lib/db/schema";
+import { accountSchema } from "~/lib/schemas";
 import { redirectWithToast } from "~/lib/toast.server";
 import { SessionManager } from "~/lib/workers/session-manager.server";
 import type { Route } from "./+types/account";
-
-export const schema = z.discriminatedUnion("intent", [
-  z.object({
-    intent: z.literal("signOutSession"),
-    sessionId: z.string().uuid(),
-  }),
-  z.object({
-    intent: z.literal("deleteUser"),
-    email: z.string({ message: "Email is required" }).email(),
-  }),
-]);
 
 export const meta: Route.MetaFunction = () => [
   { title: `Account • ${site.name}` },
@@ -65,7 +55,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const { user, session } = await requireAuth(request);
   const formData = await request.clone().formData();
   const submission = await parseWithZod(formData, {
-    schema: schema.superRefine(async (data, ctx) => {
+    schema: accountSchema.superRefine(async (data, ctx) => {
       if (data.intent === "deleteUser" && data.email !== user.email) {
         ctx.addIssue({
           path: ["email"],

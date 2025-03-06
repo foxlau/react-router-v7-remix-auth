@@ -2,7 +2,6 @@ import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form } from "react-router";
 import { HoneypotInputs } from "remix-utils/honeypot/react";
-import { z } from "zod";
 
 import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { Button } from "~/components/ui/button";
@@ -13,22 +12,10 @@ import { auth } from "~/lib/auth/auth.server";
 import { checkHoneypot } from "~/lib/auth/honeypot.server";
 import { handleAuthError, requireAnonymous } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { loginSchema } from "~/lib/schemas";
 import { redirectWithToast } from "~/lib/toast.server";
 import { rateLimit } from "~/lib/workers/helpers";
 import type { Route } from "./+types/login";
-
-const schema = z.discriminatedUnion("intent", [
-  z.object({
-    email: z.string({ message: "Email is required" }).email(),
-    intent: z.literal("totp"),
-  }),
-  z.object({
-    intent: z.literal("google"),
-  }),
-  z.object({
-    intent: z.literal("github"),
-  }),
-]);
 
 export const meta: Route.MetaFunction = () => [
   { title: `Login • ${site.name}` },
@@ -41,7 +28,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request, context }: Route.ActionArgs) {
   const formData = await request.clone().formData();
   await checkHoneypot(context.cloudflare.env, formData);
-  const submission = parseWithZod(formData, { schema });
+  const submission = parseWithZod(formData, { schema: loginSchema });
 
   if (submission.status !== "success") {
     return redirectWithToast("/auth/login", {
@@ -66,9 +53,9 @@ export default function LoginRoute() {
 
   const [form, { email }] = useForm({
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema });
+      return parseWithZod(formData, { schema: loginSchema });
     },
-    constraint: getZodConstraint(schema),
+    constraint: getZodConstraint(loginSchema),
     shouldRevalidate: "onInput",
   });
 

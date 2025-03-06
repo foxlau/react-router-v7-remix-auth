@@ -5,8 +5,8 @@ import { Form } from "react-router";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import { useUser } from "~/hooks/use-user";
+import { accountSchema } from "~/lib/schemas";
 import { cn } from "~/lib/utils";
-import { schema } from "~/routes/account";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -106,9 +106,9 @@ export function DeleteAccountForm({
 }: React.ComponentProps<"form"> & { isPending: boolean }) {
   const [form, { email }] = useForm({
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema });
+      return parseWithZod(formData, { schema: accountSchema });
     },
-    constraint: getZodConstraint(schema),
+    constraint: getZodConstraint(accountSchema),
     shouldRevalidate: "onInput",
   });
 

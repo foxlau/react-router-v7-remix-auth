@@ -2,7 +2,6 @@ import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form, Link, data, redirect, useSubmit } from "react-router";
 import { HoneypotInputs } from "remix-utils/honeypot/react";
-import { z } from "zod";
 
 import { Input } from "~/components/ui/input";
 import { StatusButton } from "~/components/ui/status-button";
@@ -11,15 +10,8 @@ import { auth } from "~/lib/auth/auth.server";
 import { checkHoneypot } from "~/lib/auth/honeypot.server";
 import { handleAuthError, handleAuthSuccess } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { verifySchema } from "~/lib/schemas";
 import type { Route } from "./+types/verify";
-
-const schema = z.object({
-  code: z
-    .string({ required_error: "Code is required" })
-    .min(6, "Code must be at least 6 characters")
-    .max(6, "Code cannot exceed 6 characters")
-    .regex(/^[A-Za-z0-9]+$/, "Code can only contain letters and numbers"),
-});
 
 export const meta: Route.MetaFunction = () => [
   { title: `Verify • ${site.name}` },
@@ -54,9 +46,9 @@ export default function VerifyRoute({
 
   const [form, { code }] = useForm({
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema });
+      return parseWithZod(formData, { schema: verifySchema });
     },
-    constraint: getZodConstraint(schema),
+    constraint: getZodConstraint(verifySchema),
     shouldRevalidate: "onInput",
   });
 

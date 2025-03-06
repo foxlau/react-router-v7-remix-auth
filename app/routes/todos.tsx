@@ -2,7 +2,6 @@ import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { and, eq, sql } from "drizzle-orm";
 import { Form, data } from "react-router";
-import { z } from "zod";
 
 import { DeleteTodo } from "~/components/todos/delete-todo";
 import { ToggleTodo } from "~/components/todos/toggle-todo";
@@ -13,23 +12,9 @@ import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
 import { db } from "~/lib/db/drizzle.server";
 import { todosTable } from "~/lib/db/schema";
+import { todoSchema } from "~/lib/schemas";
 import { redirectWithToast } from "~/lib/toast.server";
 import type { Route } from "./+types/todos";
-
-const schema = z.discriminatedUnion("intent", [
-  z.object({
-    title: z.string({ message: "Title is required" }),
-    intent: z.literal("add"),
-  }),
-  z.object({
-    todoId: z.string().cuid2(),
-    intent: z.literal("complete"),
-  }),
-  z.object({
-    todoId: z.string().cuid2(),
-    intent: z.literal("delete"),
-  }),
-]);
 
 export const meta: Route.MetaFunction = () => [
   { title: `Todos • ${site.name}` },
@@ -47,7 +32,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const { user } = await requireAuth(request);
   const formData = await request.clone().formData();
-  const submission = parseWithZod(formData, { schema });
+  const submission = parseWithZod(formData, { schema: todoSchema });
 
   if (submission.status !== "success") {
     return redirectWithToast("/todos", {
@@ -105,10 +90,10 @@ export default function TodosRoute({
 
   const [form, { title }] = useForm({
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema });
+      return parseWithZod(formData, { schema: todoSchema });
     },
     lastResult: actionData,
-    constraint: getZodConstraint(schema),
+    constraint: getZodConstraint(todoSchema),
     shouldRevalidate: "onInput",
   });
 
