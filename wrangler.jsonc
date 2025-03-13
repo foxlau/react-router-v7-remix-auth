@@ -1,0 +1,64 @@
+{
+  "name": "rr7-remix-auth",
+  "main": "./workers/server.ts",
+
+  "compatibility_date": "2024-11-18",
+  "compatibility_flags": ["nodejs_compat"],
+
+	/**
+   * Static Assets
+   * @see https://developers.cloudflare.com/workers/wrangler/configuration/#static-assets
+   */
+	"assets": {
+    "directory": "./build/client/"
+  },
+
+  /**
+   * Cloudflare Workers accounts come with a workers.dev subdomain that is configurable in the Cloudflare dashboard.
+   */
+  "workers_dev": true,
+
+  /**
+   * Whether Wrangler should keep variables configured in the dashboard on deploy.
+   * @see https://developers.cloudflare.com/workers/wrangler/configuration/
+   */
+  "keep_vars": true,
+
+  /**
+   * Configures automatic observability settings for telemetry data emitted from your Worker.
+   * @see https://developers.cloudflare.com/workers/wrangler/configuration/#observability
+   */
+  "observability": {
+    "enabled": true
+  },
+
+
+  "kv_namespaces": [
+    {
+      "binding": "APP_KV",
+      "id": "app_kv_id",
+      "preview_id": "app_kv_preview_id"
+    }
+  ],
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rr7-remix-auth",
+      "database_id": "database_id",
+      "migrations_dir": "drizzle"
+    }
+  ],
+
+  "vars": {
+    "ENVIRONMENT": "development",
+    "APP_URL": "http://localhost:5173",
+    "SESSION_SECRET": "3ebc25b381e87193f29ffea6b6d380dd",
+    "HONEYPOT_SECRET": "3ebc25b381e87193f29ffea6b6d380aa",
+    "GITHUB_CLIENT_ID": "...",
+    "GITHUB_CLIENT_SECRET": "...",
+    "GOOGLE_CLIENT_ID": "...apps.googleusercontent.com",
+    "GOOGLE_CLIENT_SECRET": "...",
+    "RESEND_API_KEY": "re_..."
+  }
+}
