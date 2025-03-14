@@ -1,14 +1,13 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
-import { cloudflareDevProxy } from "@react-router/dev/vite/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { sessionContextPlugin } from "session-context/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { getLoadContext } from "./workers/load-context";
 
 export default defineConfig({
   plugins: [
-    cloudflareDevProxy({ getLoadContext }),
+    cloudflare(),
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
@@ -24,6 +23,7 @@ export default defineConfig({
     mainFields: ["browser", "module", "main"],
   },
   build: {
+    outDir: "build",
     minify: true,
   },
 });

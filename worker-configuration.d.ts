@@ -2,6 +2,9 @@
 
 interface Env {
   APP_KV: KVNamespace;
+  CLOUDFLARE_ACCOUNT_ID: string;
+  CLOUDFLARE_DATABASE_ID: string;
+  D1_REST_API_TOKEN: string;
   ENVIRONMENT: string;
   APP_URL: string;
   SESSION_SECRET: string;
@@ -11,5 +14,7 @@ interface Env {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   RESEND_API_KEY: string;
+  BACKUP_BUCKET: R2Bucket;
   DB: D1Database;
+  BACKUP_WORKFLOW: Workflow;
 }
