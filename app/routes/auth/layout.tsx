@@ -1,6 +1,13 @@
 import { ArrowLeftIcon } from "lucide-react";
 import { Link, Outlet } from "react-router";
 import { buttonVariants } from "~/components/ui/button";
+import { noAuthMiddleware } from "~/lib/middlewares/auth-guard.server";
+
+export const unstable_middleware = [noAuthMiddleware];
+
+export async function loader() {
+  return null;
+}
 
 export default function AuthLayout() {
   return (

@@ -1,15 +1,19 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "rr7-remix-auth",
-  "main": "./workers/server.ts",
+  "main": "./workers/app.ts",
 
-  "compatibility_date": "2024-11-18",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2025-04-04",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
 
-	/**
+  /**
    * Static Assets
    * @see https://developers.cloudflare.com/workers/wrangler/configuration/#static-assets
    */
-	"assets": {
+  "assets": {
     "directory": "./build/client/"
   },
 
@@ -32,11 +36,10 @@
     "enabled": true
   },
 
-
   "kv_namespaces": [
     {
       "binding": "APP_KV",
-      "id": "app_kv_id",
+      "id": "15de0655003646a9a19be457e24b1896",
       "preview_id": "app_kv_preview_id"
     }
   ],
@@ -45,20 +48,50 @@
     {
       "binding": "DB",
       "database_name": "rr7-remix-auth",
-      "database_id": "database_id",
+      "database_id": "fa94896e-0754-4471-b183-e87cb5568112",
       "migrations_dir": "drizzle"
     }
   ],
 
+  // "workflows": [
+  //   {
+  //     "name": "backup-workflow", // name of your workflow
+  //     "binding": "BACKUP_WORKFLOW", // binding name env.BACKUPWORKFLOW
+  //     "class_name": "BackupWorkflow" // this is class that extends the Workflow class in workers/workflows/backup-workflow.ts
+  //   }
+  // ],
+
+  // "r2_buckets": [
+  //   {
+  //     "binding": "BACKUP_BUCKET",
+  //     "bucket_name": "d1-backups"
+  //   }
+  // ],
+
+  // "triggers": {
+  //   "crons": ["0 0 * * *"]
+  // },
+
   "vars": {
     "ENVIRONMENT": "development",
-    "APP_URL": "http://localhost:5173",
+    "APP_URL": "https://your-app-url.workers.dev",
+
+    // Secrets
     "SESSION_SECRET": "3ebc25b381e87193f29ffea6b6d380dd",
-    "HONEYPOT_SECRET": "3ebc25b381e87193f29ffea6b6d380aa",
+    "HONEYPOT_SECRET": "759657ffa254f2f17d9df02763f2138f",
+
+    // OAuth
     "GITHUB_CLIENT_ID": "...",
     "GITHUB_CLIENT_SECRET": "...",
     "GOOGLE_CLIENT_ID": "...apps.googleusercontent.com",
     "GOOGLE_CLIENT_SECRET": "...",
-    "RESEND_API_KEY": "re_..."
+
+    // Email
+    "RESEND_API_KEY": "re_...",
+
+    // Cloudflare
+    "CLOUDFLARE_ACCOUNT_ID": "...",
+    "CLOUDFLARE_DATABASE_ID": "...",
+    "D1_REST_API_TOKEN": "..."
   }
 }

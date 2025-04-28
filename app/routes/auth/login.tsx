@@ -10,8 +10,9 @@ import { StatusButton } from "~/components/ui/status-button";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { auth } from "~/lib/auth/auth.server";
 import { checkHoneypot } from "~/lib/auth/honeypot.server";
-import { handleAuthError, requireAnonymous } from "~/lib/auth/session.server";
+import { handleAuthError } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { adapterContext } from "~/lib/contexts";
 import { loginSchema } from "~/lib/schemas";
 import { redirectWithToast } from "~/lib/toast.server";
 import { rateLimit } from "~/lib/workers/helpers";
@@ -21,13 +22,10 @@ export const meta: Route.MetaFunction = () => [
   { title: `Login • ${site.name}` },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  return await requireAnonymous(request);
-}
-
 export async function action({ request, context }: Route.ActionArgs) {
+  const loadContext = context.get(adapterContext);
   const formData = await request.clone().formData();
-  await checkHoneypot(context.cloudflare.env, formData);
+  await checkHoneypot(loadContext.cloudflare.env, formData);
   const submission = parseWithZod(formData, { schema: loginSchema });
 
   if (submission.status !== "success") {
@@ -38,8 +36,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 
   try {
-    await requireAnonymous(request);
-    await rateLimit(request.headers, { kv: context.cloudflare.env.APP_KV });
+    await rateLimit(request.headers, { kv: loadContext.cloudflare.env.APP_KV });
     return await auth.authenticate(submission.value.intent, request);
   } catch (error) {
     return await handleAuthError(submission.value.intent, error);

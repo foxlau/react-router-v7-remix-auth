@@ -15,18 +15,17 @@ import { GeneralErrorBoundary } from "./components/error-boundary";
 import { ProgressBar } from "./components/progress-bar";
 import { useNonce } from "./hooks/use-nonce";
 import { useToast } from "./hooks/use-toast";
-import { querySession } from "./lib/auth/session.server";
 import {
   ColorSchemeScript,
   useColorScheme,
 } from "./lib/color-scheme/components";
 import { parseColorScheme } from "./lib/color-scheme/server";
 import { site } from "./lib/config";
+import { adapterContext } from "./lib/contexts";
 import { requestMiddleware } from "./lib/http.server";
 import { getToast } from "./lib/toast.server";
 import { combineHeaders } from "./lib/utils";
 import stylesheet from "./styles/app.css?url";
-
 export const meta: Route.MetaFunction = ({ error }) => [
   { title: (error ? "Oops! • " : "") + site.name },
 ];
@@ -60,17 +59,15 @@ export const links: Route.LinksFunction = () => {
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   await requestMiddleware(request);
-
-  const { validSession } = await querySession(request);
+  const loadContext = context.get(adapterContext);
   const { toast, headers: toastHeaders } = await getToast(request);
   const colorScheme = await parseColorScheme(request);
   const honeyProps = await new Honeypot({
-    encryptionSeed: context.cloudflare.env.HONEYPOT_SECRET,
+    encryptionSeed: loadContext.cloudflare.env.HONEYPOT_SECRET,
   }).getInputProps();
 
   return data(
     {
-      user: validSession?.user,
       toast,
       colorScheme,
       honeyProps,

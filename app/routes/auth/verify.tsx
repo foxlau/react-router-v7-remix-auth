@@ -10,6 +10,7 @@ import { auth } from "~/lib/auth/auth.server";
 import { checkHoneypot } from "~/lib/auth/honeypot.server";
 import { handleAuthError, handleAuthSuccess } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { adapterContext } from "~/lib/contexts";
 import { verifySchema } from "~/lib/schemas";
 import type { Route } from "./+types/verify";
 
@@ -27,8 +28,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
+  const loadContext = context.get(adapterContext);
   const formData = await request.clone().formData();
-  await checkHoneypot(context.cloudflare.env, formData);
+  await checkHoneypot(loadContext.cloudflare.env, formData);
   try {
     return await handleAuthSuccess("totp", request);
   } catch (error) {

@@ -1,11 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import type { loader } from "~/routes/account";
+import { useUser } from "~/hooks/use-user";
 
-export function UserProfile({
-  user,
-}: {
-  user: Awaited<ReturnType<typeof loader>>["data"]["user"];
-}) {
+export function UserProfile() {
+  const user = useUser();
   return (
     <div className="space-y-4">
       <h2 className="font-semibold text-base">Profile</h2>
@@ -14,14 +11,14 @@ export function UserProfile({
           <Avatar className="size-12">
             <AvatarImage
               src={
-                user?.avatarUrl
-                  ? user?.avatarUrl
-                  : `https://avatar.vercel.sh/${user?.displayName}`
+                user.avatarUrl
+                  ? user.avatarUrl
+                  : `https://avatar.vercel.sh/${user.displayName}`
               }
-              alt={user?.displayName ?? "User avatar"}
+              alt={user.displayName ?? "User avatar"}
             />
             <AvatarFallback className="font-bold text-xs uppercase">
-              {user?.displayName?.slice(0, 2)}
+              {user.displayName?.slice(0, 2)}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -30,7 +27,9 @@ export function UserProfile({
             {user.displayName} ({user.email})
           </strong>
           <br />
-          <span className="text-muted-foreground">Joined {user.createdAt}</span>
+          <span className="text-muted-foreground">
+            Joined {user.createdAt.toLocaleDateString()}
+          </span>
         </div>
       </section>
     </div>

@@ -1,4 +1,4 @@
-interface SessionData {
+export interface SessionData {
   userId: string;
   sessionId: string;
   userAgent?: string;
@@ -115,15 +115,22 @@ export class SessionManager {
     const prefix = this.getUserPrefix(userId);
     // List all keys matching the prefix from KV
     const { keys } = await this.kv.list({ prefix });
-
+    // Extract key names
+    const keyNames = keys.map((keyInfo) => keyInfo.name);
     const sessions: SessionData[] = [];
-    // Iterate through all matching keys
-    for (const keyInfo of keys) {
-      // Get value for each key from KV
-      const value = await this.kv.get(keyInfo.name);
-      // If value exists, parse JSON and add to sessions array
-      if (value) {
-        sessions.push(JSON.parse(value) as SessionData);
+
+    // Process keys in chunks of 100 (KV bulk read limit)
+    for (let i = 0; i < keyNames.length; i += 100) {
+      const chunk = keyNames.slice(i, i + 100);
+      // Fetch values for the chunk of keys using bulk read
+      const valuesMap: Map<string, string | null> = await this.kv.get(chunk);
+
+      // Iterate through the fetched values
+      for (const value of valuesMap.values()) {
+        // If value exists, parse JSON and add to sessions array
+        if (value) {
+          sessions.push(JSON.parse(value) as SessionData);
+        }
       }
     }
 
