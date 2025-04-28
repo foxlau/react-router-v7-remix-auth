@@ -1,8 +1,8 @@
+import { env } from "cloudflare:workers";
 import { createId } from "@paralleldrive/cuid2";
 import { and, eq } from "drizzle-orm";
 import { type SessionStorage, createCookieSessionStorage } from "react-router";
 import { Authenticator } from "remix-auth";
-import { getSessionContext } from "session-context";
 
 import { db } from "../db/drizzle.server";
 import { type InsertAccount, accountsTable, usersTable } from "../db/schema";
@@ -38,141 +38,118 @@ const AUTH_SESSION_NAME = "__auth-session";
 const AUTH_SESSION_TTL = 60 * 60 * 24 * 15; // 15 days
 export const AUTH_TOTP_PERIOD = 60 * 10; // Totp expire time (10 minutes)
 
-/**
- * Create an auth instance with session storage and authentication strategies
- *
- * @param env - The environment variables
- * @returns The auth instance
- */
-export const auth = new Proxy({} as AuthInterface, {
-  get(_target, prop: keyof AuthInterface) {
-    const store = getSessionContext<{
-      authenticator?: AuthInterface;
-      env: Env;
-    }>();
-
-    if (!store.authenticator) {
-      store.authenticator = createAuth(store.env);
-    }
-
-    const value = store.authenticator[prop];
-    return typeof value === "function"
-      ? value.bind(store.authenticator)
-      : value;
+// Create session storage
+const sessionStorage = createCookieSessionStorage({
+  cookie: {
+    name: AUTH_SESSION_NAME,
+    path: "/",
+    sameSite: "lax",
+    httpOnly: true,
+    secrets: [env.SESSION_SECRET ?? "s3cr3t"],
+    secure: process.env.NODE_ENV === "production",
+    maxAge: AUTH_SESSION_TTL,
   },
 });
 
-/**
- * Create an authentication instance with session storage and strategies
- *
- * @param env - The environment variables
- * @returns The authentication instance
- */
-export function createAuth(env: Env): AuthInterface {
-  const getSessionParams = (request: Request) => ({
-    userAgent: request.headers.get("user-agent") || "Unknown",
-    country: request.headers.get("cf-ipcountry") || "Unknown",
-    ipAddress: request.headers.get("cf-connecting-ip") || "127.0.0.1",
-    createdAt: Date.now(),
-    expiresAt: Date.now() + AUTH_SESSION_TTL * 1000,
-  });
+// Initialize Authenticator
+const authenticator = new Authenticator<AuthUserSession>();
 
-  const sessionStorage = createCookieSessionStorage({
-    cookie: {
-      name: AUTH_SESSION_NAME,
-      path: "/",
-      sameSite: "lax", // If you change to "none", you need to set the secure flag to true
-      httpOnly: true,
-      secrets: [env.SESSION_SECRET ?? "s3cr3t"],
-      secure: process.env.NODE_ENV === "production",
-      maxAge: AUTH_SESSION_TTL,
+// Common session parameters getter
+const getSessionParams = (request: Request) => ({
+  userAgent: request.headers.get("user-agent") || "Unknown",
+  country: request.headers.get("cf-ipcountry") || "Unknown",
+  ipAddress: request.headers.get("cf-connecting-ip") || "127.0.0.1",
+  createdAt: Date.now(),
+  expiresAt: Date.now() + AUTH_SESSION_TTL * 1000,
+});
+
+// Initialize Session Manager and environment flag
+const sessionManager = new SessionManager(env.APP_KV, AUTH_SESSION_TTL);
+const isDevelopment = env.ENVIRONMENT === "development";
+
+// Configure TOTP Strategy
+authenticator.use(
+  new TOTPStrategy(
+    {
+      kv: env.APP_KV,
+      validateEmail: async (email) => {
+        return await validateEmail(email);
+      },
+      sendTOTP: async ({ email, code }) => {
+        if (isDevelopment) {
+          return logger.info({ event: "totp_send", email, code });
+        }
+        await sendAuthTotpEmail({ env, email, code });
+      },
     },
-  });
+    async ({ email, request }) => {
+      const userId = await handleUserAuth({
+        email,
+        provider: "totp",
+      });
+      const sessionId = await sessionManager.createSession({
+        userId,
+        ...getSessionParams(request),
+      });
+      return { userId, sessionId };
+    },
+  ),
+);
 
-  const authenticator = new Authenticator<AuthUserSession>();
-  const sessionManager = new SessionManager(env.APP_KV, AUTH_SESSION_TTL);
-  const isDevelopment = env.ENVIRONMENT === "development";
+// Configure Google Strategy
+authenticator.use(
+  new GoogleStrategy<AuthUserSession>(
+    {
+      clientId: env.GOOGLE_CLIENT_ID || "",
+      clientSecret: env.GOOGLE_CLIENT_SECRET || "",
+      redirectURI: `${env.APP_URL}/auth/google/callback`,
+    },
+    async ({ tokens, request }) => {
+      const profile = await GoogleStrategy.userProfile(tokens);
+      const userId = await handleUserAuth({
+        email: profile._json.email,
+        displayName: profile.displayName,
+        avatarUrl: profile._json.picture,
+        provider: "google",
+        providerAccountId: profile.id,
+      });
+      const sessionId = await sessionManager.createSession({
+        userId,
+        ...getSessionParams(request),
+      });
+      return { userId, sessionId };
+    },
+  ),
+);
 
-  authenticator.use(
-    new TOTPStrategy(
-      {
-        kv: env.APP_KV,
-        validateEmail: async (email) => {
-          return await validateEmail(email);
-        },
-        sendTOTP: async ({ email, code }) => {
-          if (isDevelopment) {
-            return logger.info({ event: "totp_send", email, code });
-          }
-          await sendAuthTotpEmail({ env, email, code });
-        },
-      },
-      async ({ email, request }) => {
-        const userId = await handleUserAuth({
-          email,
-          provider: "totp",
-        });
-        const sessionId = await sessionManager.createSession({
-          userId,
-          ...getSessionParams(request),
-        });
-        return { userId, sessionId };
-      },
-    ),
-  );
+// Configure GitHub Strategy
+authenticator.use(
+  new GitHubStrategy<AuthUserSession>(
+    {
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+      redirectURI: `${env.APP_URL}/auth/github/callback`,
+    },
+    async ({ tokens, request }) => {
+      const profile = await GitHubStrategy.userProfile(tokens);
+      const userId = await handleUserAuth({
+        email: profile._json.email || profile?.emails[0]?.value,
+        displayName: profile.displayName,
+        avatarUrl: profile._json.avatar_url,
+        provider: "github",
+        providerAccountId: profile.id,
+      });
+      const sessionId = await sessionManager.createSession({
+        userId,
+        ...getSessionParams(request),
+      });
+      return { userId, sessionId };
+    },
+  ),
+);
 
-  authenticator.use(
-    new GoogleStrategy<AuthUserSession>(
-      {
-        clientId: env.GOOGLE_CLIENT_ID || "",
-        clientSecret: env.GOOGLE_CLIENT_SECRET || "",
-        redirectURI: `${env.APP_URL}/auth/google/callback`,
-      },
-      async ({ tokens, request }) => {
-        const profile = await GoogleStrategy.userProfile(tokens);
-        const userId = await handleUserAuth({
-          email: profile._json.email,
-          displayName: profile.displayName,
-          avatarUrl: profile._json.picture,
-          provider: "google",
-          providerAccountId: profile.id,
-        });
-        const sessionId = await sessionManager.createSession({
-          userId,
-          ...getSessionParams(request),
-        });
-        return { userId, sessionId };
-      },
-    ),
-  );
-
-  authenticator.use(
-    new GitHubStrategy<AuthUserSession>(
-      {
-        clientId: env.GITHUB_CLIENT_ID,
-        clientSecret: env.GITHUB_CLIENT_SECRET,
-        redirectURI: `${env.APP_URL}/auth/github/callback`,
-      },
-      async ({ tokens, request }) => {
-        const profile = await GitHubStrategy.userProfile(tokens);
-        const userId = await handleUserAuth({
-          email: profile._json.email || profile?.emails[0]?.value,
-          displayName: profile.displayName,
-          avatarUrl: profile._json.avatar_url,
-          provider: "github",
-          providerAccountId: profile.id,
-        });
-        const sessionId = await sessionManager.createSession({
-          userId,
-          ...getSessionParams(request),
-        });
-        return { userId, sessionId };
-      },
-    ),
-  );
-
-  return Object.assign(authenticator, sessionStorage);
-}
+// Export the combined auth object
+export const auth: AuthInterface = Object.assign(authenticator, sessionStorage);
 
 /**
  * Handle user authentication and account creation/linking

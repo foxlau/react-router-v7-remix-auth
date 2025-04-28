@@ -1,8 +1,9 @@
 import { Monitor, Smartphone, XIcon } from "lucide-react";
-import { useState } from "react";
-import { useFetcher } from "react-router";
+import { Suspense, useState } from "react";
+import { Await, useFetcher } from "react-router";
+import { Skeleton } from "~/components/ui/skeleton";
 import { useMediaQuery } from "~/hooks/use-media-query";
-import type { loader } from "~/routes/account";
+import type { ProcessedSession } from "~/routes/account";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,10 +33,8 @@ const MODAL_TITLE = "Are you sure?";
 const MODAL_DESCRIPTION = "Clicking continue will sign you out of this device.";
 
 export function SessionManage({
-  sessions,
-}: {
-  sessions: Awaited<ReturnType<typeof loader>>["data"]["sessions"];
-}) {
+  sessionsPromise,
+}: { sessionsPromise: Promise<ProcessedSession[]> }) {
   return (
     <div className="space-y-4">
       <header className="space-y-2">
@@ -46,11 +45,20 @@ export function SessionManage({
           complete.
         </p>
       </header>
-      <section className="space-y-4">
-        {sessions.map((session) => (
-          <SessionItem key={session.id} session={session} />
-        ))}
-      </section>
+      <Suspense fallback={<SessionManageSkeleton />}>
+        <Await
+          resolve={sessionsPromise}
+          errorElement={<div>Error loading sessions.</div>}
+        >
+          {(sessions: ProcessedSession[]) => (
+            <section className="space-y-4">
+              {sessions.map((session) => (
+                <SessionItem key={session.id} session={session} />
+              ))}
+            </section>
+          )}
+        </Await>
+      </Suspense>
     </div>
   );
 }
@@ -58,7 +66,7 @@ export function SessionManage({
 export function SessionItem({
   session,
 }: {
-  session: Awaited<ReturnType<typeof loader>>["data"]["sessions"][number];
+  session: ProcessedSession;
 }) {
   const [open, setOpen] = useState(false);
   const fetcher = useFetcher();
@@ -91,7 +99,7 @@ export function SessionItem({
   );
 
   return (
-    <div className="relative flex items-center justify-between rounded-lg border py-4 pr-10 pl-4 shadow-black/5 shadow-sm">
+    <div className="relative flex items-center justify-between rounded-lg border py-4 pr-10 pl-4 shadow-xs">
       <div className="flex items-start gap-2">
         <div className="mt-1 hidden sm:block">
           {session.isMobile ? (
@@ -160,6 +168,17 @@ export function SessionItem({
             <span className="hidden sm:block">This device</span>
           </Badge>
         )}
+      </div>
+    </div>
+  );
+}
+
+function SessionManageSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2 rounded-lg border p-4 shadow-xs">
+        <Skeleton className="h-4 w-8/12" />
+        <Skeleton className="h-4 w-10/12" />
       </div>
     </div>
   );

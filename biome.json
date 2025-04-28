@@ -58,6 +58,10 @@
     }
   },
   "files": {
-    "ignore": ["drizzle/**/*"]
+    "ignore": [
+      "drizzle/**/*",
+      "**/.react-router/**/*",
+      "**/worker-configuration.d.ts"
+    ]
   }
 }

@@ -49,7 +49,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
           delayedPending && transition.state === "loading" && "w-8/12",
         )}
       >
-        <div className="-translate-y-1 absolute right-0 block h-full w-[100px] rotate-[3deg] opacity-100 shadow-[0_0_10px_var(--primary),0_0_5px_var(--primary)] dark:shadow-[0_0_10px_var(--primary),0_0_5px_var(--primary)]" />
+        <div className="-translate-y-1 absolute right-0 block h-full w-[100px] rotate-[3deg] opacity-100" />
       </div>
       {delayedPending && showSpinner && (
         <div className="absolute top-2 right-2 flex items-center justify-center">

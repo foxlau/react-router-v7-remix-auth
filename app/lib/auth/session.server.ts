@@ -1,5 +1,5 @@
+import { env } from "cloudflare:workers";
 import { type Session, type SessionData, redirect } from "react-router";
-import { getSessionContext } from "session-context";
 import { db } from "../db/drizzle.server";
 import { logger } from "../logger";
 import { redirectWithToast } from "../toast.server";
@@ -7,9 +7,9 @@ import { getErrorMessage } from "../utils";
 import { SessionManager } from "../workers/session-manager.server";
 import { type AuthUserSession, auth } from "./auth.server";
 
-const AUTH_USER_KEY = "auth-user";
-const AUTH_SUCCESS_REDIRECT_TO = "/home";
-const AUTH_ERROR_REDIRECT_TO = "/auth/login";
+export const AUTH_USER_KEY = "auth-user";
+export const AUTH_SUCCESS_REDIRECT_TO = "/home";
+export const AUTH_ERROR_REDIRECT_TO = "/auth/login";
 
 /**
  * Authenticate and redirect to home page
@@ -64,7 +64,7 @@ export async function handleAuthError(
  * @param sessionUser - The session user
  * @returns The user data
  */
-async function validateSession(
+export async function validateSession(
   session: Session<SessionData, SessionData>,
   sessionUser: AuthUserSession | null,
 ) {
@@ -72,8 +72,7 @@ async function validateSession(
     return null;
   }
 
-  const { APP_KV } = getSessionContext<{ env: Env }>().env;
-  const sessionManager = new SessionManager(APP_KV);
+  const sessionManager = new SessionManager(env.APP_KV);
   const [user, sessionData] = await Promise.all([
     db.query.usersTable.findFirst({
       where: (users, { eq }) => eq(users.id, sessionUser.userId),
@@ -127,46 +126,6 @@ export async function querySession(request: Request) {
   const { session, sessionUser } = await getSessionFromCookie(request);
   const validSession = await validateSession(session, sessionUser);
   return { session, validSession };
-}
-
-/**
- * Ensure user is not authenticated (for login/register pages)
- *
- * @param request - The request object
- * @param redirectTo - The redirect URL
- * @returns The session data
- */
-export async function requireAnonymous(
-  request: Request,
-  redirectTo = AUTH_SUCCESS_REDIRECT_TO,
-) {
-  const { validSession } = await querySession(request);
-
-  if (validSession) {
-    throw redirect(redirectTo);
-  }
-}
-
-/**
- * Ensure user is authenticated (for protected pages)
- *
- * @param request - The request object
- * @param redirectTo - The redirect URL
- * @returns The session data
- */
-export async function requireAuth(
-  request: Request,
-  redirectTo = AUTH_ERROR_REDIRECT_TO,
-) {
-  const { session, validSession } = await querySession(request);
-
-  if (!validSession) {
-    throw redirect(redirectTo, {
-      headers: { "Set-Cookie": await auth.destroySession(session) },
-    });
-  }
-
-  return validSession;
 }
 
 /**

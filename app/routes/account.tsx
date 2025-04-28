@@ -1,7 +1,6 @@
 import { parseWithZod } from "@conform-to/zod";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { eq } from "drizzle-orm";
-import { data } from "react-router";
 import { UAParser } from "ua-parser-js";
 import { z } from "zod";
 
@@ -10,8 +9,8 @@ import { DeleteAccount } from "~/components/account/delete-account";
 import { SessionManage } from "~/components/account/session-manage";
 import { UserProfile } from "~/components/account/user-profile";
 import { auth } from "~/lib/auth/auth.server";
-import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { adapterContext, authSessionContext } from "~/lib/contexts";
 import { db } from "~/lib/db/drizzle.server";
 import { usersTable } from "~/lib/db/schema";
 import { accountSchema } from "~/lib/schemas";
@@ -23,40 +22,53 @@ export const meta: Route.MetaFunction = () => [
   { title: `Account • ${site.name}` },
 ];
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const user = await requireAuth(request);
-  const sessionManager = new SessionManager(context.cloudflare.env.APP_KV);
-  const sessions = await sessionManager.listUserSessions(user.user.id);
+// Define the type for a processed session explicitly
+export type ProcessedSession = {
+  id: string;
+  userAgent: string;
+  isMobile: boolean;
+  ipAddress: string | null;
+  country: string | null;
+  createdAt: string;
+  isCurrent: boolean;
+};
 
-  return data({
-    user: {
-      email: user.user.email,
-      displayName: user.user.displayName,
-      avatarUrl: user.user.avatarUrl,
-      createdAt: format(new Date(user.user.createdAt), "MMMM d, yyyy"),
-    },
-    sessions: sessions.sessions.map((session) => {
-      const { browser, device, os } = UAParser(session.userAgent);
-      return {
-        id: session.sessionId,
-        userAgent: `${os.name} · ${browser.name} ${browser.version}`,
-        isMobile: device.is("mobile"),
-        ipAddress: session.ipAddress,
-        country: session.country,
-        createdAt: formatDistanceToNow(new Date(session.createdAt)),
-        isCurrent: session.sessionId === user.session.id,
-      };
-    }),
-  });
+export async function loader({ context }: Route.LoaderArgs) {
+  const loadContext = context.get(adapterContext);
+  const authSession = context.get(authSessionContext);
+  const sessionManager = new SessionManager(loadContext.cloudflare.env.APP_KV);
+  const sessionsPromise: Promise<ProcessedSession[]> = sessionManager
+    .listUserSessions(authSession.user.id)
+    .then((sessions) => {
+      return sessions.sessions.map((session) => {
+        const { browser, device, os } = UAParser(session.userAgent);
+        return {
+          id: session.sessionId,
+          userAgent: `${os.name} · ${browser.name} ${browser.version}`,
+          isMobile: device.type === "mobile",
+          ipAddress: session.ipAddress ?? null,
+          country: session.country ?? null,
+          createdAt: formatDistanceToNow(new Date(session.createdAt)),
+          isCurrent: session.sessionId === authSession.session.id,
+        };
+      });
+    });
+
+  return { sessionsPromise };
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
   const redirectPath = "/account";
-  const { user, session } = await requireAuth(request);
+  const loadContext = context.get(adapterContext);
+  const authSession = context.get(authSessionContext);
+
   const formData = await request.clone().formData();
   const submission = await parseWithZod(formData, {
     schema: accountSchema.superRefine(async (data, ctx) => {
-      if (data.intent === "deleteUser" && data.email !== user.email) {
+      if (
+        data.intent === "deleteUser" &&
+        data.email !== authSession.user.email
+      ) {
         ctx.addIssue({
           path: ["email"],
           code: z.ZodIssueCode.custom,
@@ -79,17 +91,20 @@ export async function action({ request, context }: Route.ActionArgs) {
     });
   }
 
-  const sessionManager = new SessionManager(context.cloudflare.env.APP_KV);
+  const sessionManager = new SessionManager(loadContext.cloudflare.env.APP_KV);
 
   switch (submission.value.intent) {
     case "signOutSession": {
-      if (submission.value.sessionId === session.id) {
+      if (submission.value.sessionId === authSession.session.id) {
         return redirectWithToast(redirectPath, {
           title: "You cannot sign out your current session",
           type: "error",
         });
       }
-      await sessionManager.deleteSession(user.id, submission.value.sessionId);
+      await sessionManager.deleteSession(
+        authSession.user.id,
+        submission.value.sessionId,
+      );
       return redirectWithToast(redirectPath, {
         title: "Session signed out",
         type: "success",
@@ -97,8 +112,8 @@ export async function action({ request, context }: Route.ActionArgs) {
     }
     case "deleteUser": {
       const [, , session] = await Promise.all([
-        sessionManager.deleteUserSessions(user.id),
-        db.delete(usersTable).where(eq(usersTable.id, user.id)),
+        sessionManager.deleteUserSessions(authSession.user.id),
+        db.delete(usersTable).where(eq(usersTable.id, authSession.user.id)),
         auth.getSession(request.headers.get("Cookie")),
       ]);
       return redirectWithToast(
@@ -122,9 +137,9 @@ export async function action({ request, context }: Route.ActionArgs) {
 export default function AccountRoute({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-12">
-      <UserProfile user={loaderData.user} />
+      <UserProfile />
       <Appearance />
-      <SessionManage sessions={loaderData.sessions} />
+      <SessionManage sessionsPromise={loaderData.sessionsPromise} />
       <DeleteAccount />
     </div>
   );

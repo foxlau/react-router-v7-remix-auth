@@ -2,7 +2,7 @@ ENVIRONMENT = "development" # development | production
 
 APP_URL = "http://localhost:5173"
 SESSION_SECRET = "3ebc25b381e87193f29ffea6b6d380dd"
-HONEYPOT_SECRET = "3ebc25b381e87193f29ffea6b6d380aa"
+HONEYPOT_SECRET = "759657ffa254f2f17d9df02763f2138f"
 
 GITHUB_CLIENT_ID = "..."
 GITHUB_CLIENT_SECRET = "..."

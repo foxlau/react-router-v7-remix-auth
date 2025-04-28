@@ -17,7 +17,7 @@ export const accountSchema = z.discriminatedUnion("intent", [
 
 export const todoSchema = z.discriminatedUnion("intent", [
   z.object({
-    title: z.string({ message: "Title is required" }),
+    title: z.string({ message: "Title is required" }).min(10).max(255),
     intent: z.literal("add"),
   }),
   z.object({

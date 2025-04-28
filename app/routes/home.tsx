@@ -5,8 +5,8 @@ import {
   UserCogIcon,
 } from "lucide-react";
 import { Link, data } from "react-router";
-import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { authSessionContext } from "~/lib/contexts";
 import type { Route } from "./+types/home";
 
 type NavLink = {
@@ -19,9 +19,9 @@ export const meta: Route.MetaFunction = () => [
   { title: `Home • ${site.name}` },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { user } = await requireAuth(request);
-  return data({ user });
+export async function loader({ context }: Route.LoaderArgs) {
+  const authSession = context.get(authSessionContext);
+  return data({ user: authSession.user });
 }
 
 function NavLinks({ links }: { links: NavLink[] }) {

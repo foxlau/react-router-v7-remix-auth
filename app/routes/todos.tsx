@@ -8,8 +8,8 @@ import { ToggleTodo } from "~/components/todos/toggle-todo";
 import { Input } from "~/components/ui/input";
 import { StatusButton } from "~/components/ui/status-button";
 import { useIsPending } from "~/hooks/use-is-pending";
-import { requireAuth } from "~/lib/auth/session.server";
 import { site } from "~/lib/config";
+import { authSessionContext } from "~/lib/contexts";
 import { db } from "~/lib/db/drizzle.server";
 import { todosTable } from "~/lib/db/schema";
 import { todoSchema } from "~/lib/schemas";
@@ -20,17 +20,17 @@ export const meta: Route.MetaFunction = () => [
   { title: `Todos • ${site.name}` },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { user } = await requireAuth(request);
+export async function loader({ context }: Route.LoaderArgs) {
+  const authSession = context.get(authSessionContext);
   return data({
     todos: await db.query.todosTable.findMany({
-      where: (todo, { eq }) => eq(todo.userId, user.id),
+      where: (todo, { eq }) => eq(todo.userId, authSession.user.id),
     }),
   });
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const { user } = await requireAuth(request);
+export async function action({ request, context }: Route.ActionArgs) {
+  const authSession = context.get(authSessionContext);
   const formData = await request.clone().formData();
   const submission = parseWithZod(formData, { schema: todoSchema });
 
@@ -45,7 +45,7 @@ export async function action({ request }: Route.ActionArgs) {
     case "add": {
       await db.insert(todosTable).values({
         title: submission.value.title,
-        userId: user.id,
+        userId: authSession.user.id,
       });
       break;
     }
@@ -64,7 +64,7 @@ export async function action({ request }: Route.ActionArgs) {
         .where(
           and(
             eq(todosTable.id, submission.value.todoId),
-            eq(todosTable.userId, user.id),
+            eq(todosTable.userId, authSession.user.id),
           ),
         );
       break;
@@ -97,12 +97,6 @@ export default function TodosRoute({
     shouldRevalidate: "onInput",
   });
 
-  // Fix this warning by removing the key prop from the Input component
-  // More about this warning: https://github.com/edmundhung/conform/issues/620
-  const { key: titleKey, ...titleProps } = getInputProps(title, {
-    type: "text",
-  });
-
   return (
     <div className="space-y-12">
       <header className="space-y-2">
@@ -119,19 +113,17 @@ export default function TodosRoute({
           className="flex flex-col gap-2"
           {...getFormProps(form)}
         >
+          <input type="hidden" name="intent" value="add" />
           <div className="flex items-center gap-2">
             <Input
-              {...titleProps}
-              key={titleKey}
               placeholder="Enter your todo here"
               aria-label="Enter your todo here"
               autoComplete="off"
               autoFocus
+              {...getInputProps(title, { type: "text" })}
             />
             <StatusButton
               isLoading={isAdding}
-              name="intent"
-              value="add"
               text="Add"
               aria-label="Add todo"
             />
