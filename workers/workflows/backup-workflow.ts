@@ -1,3 +1,4 @@
+/*
 import {
   WorkflowEntrypoint,
   type WorkflowEvent,
@@ -75,3 +76,4 @@ export class BackupWorkflow extends WorkflowEntrypoint<Env, Params> {
     });
   }
 }
+*/
