@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@cloudflare/vite-plugin": "^1.0.12",
+    "@cloudflare/vite-plugin": "^1.1.1",
     "@cloudflare/workers-types": "^4.20250428.0",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
