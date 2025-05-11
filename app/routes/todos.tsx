@@ -17,7 +17,7 @@ import { redirectWithToast } from "~/lib/toast.server";
 import type { Route } from "./+types/todos";
 
 export const meta: Route.MetaFunction = () => [
-  { title: `Todos • ${site.name}` },
+  { title: `Todo List • ${site.name}` },
 ];
 
 export async function loader({ context }: Route.LoaderArgs) {
@@ -100,7 +100,7 @@ export default function TodosRoute({
   return (
     <div className="space-y-12">
       <header className="space-y-2">
-        <h2 className="font-semibold text-base">Todos</h2>
+        <h2 className="font-semibold text-base">Todo List</h2>
         <p className="text-muted-foreground">
           This is a practical case demonstrating the combined use of Cloudflare
           D1 and Drizzle ORM.

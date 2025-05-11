@@ -1,83 +1,76 @@
-import {
-  ArrowRightIcon,
-  ListCheckIcon,
-  type LucideIcon,
-  UserCogIcon,
-} from "lucide-react";
-import { Link, data } from "react-router";
+import { ListTodoIcon, type LucideIcon, UserCogIcon } from "lucide-react";
+import { Link, href } from "react-router";
+
+import { useUser } from "~/hooks/use-user";
 import { site } from "~/lib/config";
-import { authSessionContext } from "~/lib/contexts";
 import type { Route } from "./+types/home";
 
 type NavLink = {
   to: string;
   icon: LucideIcon;
   label: string;
+  description: string;
 };
 
-export const meta: Route.MetaFunction = () => [
-  { title: `Home • ${site.name}` },
-];
+export const meta: Route.MetaFunction = () => {
+  return [{ title: `Home • ${site.name}` }];
+};
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const authSession = context.get(authSessionContext);
-  return data({ user: authSession.user });
-}
-
-function NavLinks({ links }: { links: NavLink[] }) {
-  return (
-    <ul className="flex flex-col gap-2">
-      {links.map((link) => (
-        <li key={link.to}>
-          <Link
-            to={link.to}
-            className="inline-flex w-full items-center justify-between whitespace-nowrap rounded-lg border border-border bg-background p-4 font-semibold shadow-black/5 shadow-sm outline-offset-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 sm:h-14"
-          >
-            <div className="flex items-center gap-2">
-              <link.icon size={20} className="shrink-0 opacity-60" />
-              <span className="truncate">{link.label}</span>
-            </div>
-            <ArrowRightIcon
-              size={16}
-              className="-mr-1 ml-2 shrink-0 opacity-60"
-            />
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export default function HomeRoute({
-  loaderData: { user },
-}: Route.ComponentProps) {
+export default function HomeRoute(_: Route.ComponentProps) {
+  const user = useUser();
   const navLinks: NavLink[] = [
     {
-      to: "/todos",
-      icon: ListCheckIcon,
-      label: "Manage todos",
+      to: href("/todos"),
+      icon: ListTodoIcon,
+      label: "Todo List",
+      description: "Create and manage your todos",
     },
     {
-      to: "/account",
+      to: href("/account"),
       icon: UserCogIcon,
-      label: "Account settings",
+      label: "Account Settings",
+      description: "Manage your account settings",
     },
   ];
 
   return (
-    <div className="space-y-12">
+    <>
       <header className="space-y-2">
-        <h2 className="font-semibold text-xl">
-          <span className="mr-2 text-2xl">👋</span> Hi, {user.displayName}!
+        <h2 className="font-semibold text-base">
+          <span className="mr-2 text-xl">👋</span> Hi, {user.displayName}!
         </h2>
-        <p className="text-base text-muted-foreground">
+        <p className="text-muted-foreground">
           Welcome to your dashboard. Here you can manage your todos and account
           settings.
         </p>
       </header>
-      <nav>
-        <NavLinks links={navLinks} />
-      </nav>
-    </div>
+
+      <NavLinks links={navLinks} />
+    </>
+  );
+}
+
+function NavLinks({ links }: { links: NavLink[] }) {
+  return (
+    <ul className="grid grid-cols-1 gap-4 py-6 sm:grid-cols-2 sm:gap-6">
+      {links.map((link) => (
+        <li key={link.to}>
+          <Link
+            to={link.to}
+            className="inline-flex w-full whitespace-nowrap rounded-lg border border-border bg-background px-5 py-4 shadow-xs hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-ring/70"
+          >
+            <div className="flex flex-col gap-2">
+              <link.icon size={28} className="shrink-0 opacity-50" />
+              <div className="flex flex-col">
+                <h3 className="font-medium">{link.label}</h3>
+                <p className="text-muted-foreground text-sm">
+                  {link.description}
+                </p>
+              </div>
+            </div>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
