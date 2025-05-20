@@ -87,8 +87,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       remix-auth-oauth2:
-        specifier: ^3.4.0
-        version: 3.4.0(remix-auth@4.2.0)
+        specifier: ^3.4.1
+        version: 3.4.1(remix-auth@4.2.0)
       remix-utils:
         specifier: ^8.7.0
         version: 8.7.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@3.24.4)
@@ -3039,8 +3039,8 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
-  remix-auth-oauth2@3.4.0:
-    resolution: {integrity: sha512-aU2TfxqQcJTV3pt7bwXCqUtemE+nXSJnIcWdlCRDUrH+1bwj9WXOkteCOx17fq9xfeXsGpt9xOKasrPoBpjelw==}
+  remix-auth-oauth2@3.4.1:
+    resolution: {integrity: sha512-ZhGon1czdIsOw1/O9EcTCzapZB6FpT3u9vtXSVeEMwGNs+iWljRsibnUC1RtwJbzzCdLBSwIXTNTbiRmLZ4cZw==}
     engines: {node: ^20.0.0 || >=20.0.0}
     peerDependencies:
       remix-auth: ^4.0.0
@@ -6039,15 +6039,12 @@ snapshots:
 
   readdirp@4.1.2: {}
 
-  remix-auth-oauth2@3.4.0(remix-auth@4.2.0):
+  remix-auth-oauth2@3.4.1(remix-auth@4.2.0):
     dependencies:
       '@edgefirst-dev/data': 0.0.4
       '@mjackson/headers': 0.10.0
       arctic: 3.6.1
-      debug: 4.4.0
       remix-auth: 4.2.0
-    transitivePeerDependencies:
-      - supports-color
 
   remix-auth@4.2.0: {}
 
