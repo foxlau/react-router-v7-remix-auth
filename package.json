@@ -60,7 +60,7 @@
     "@cloudflare/workers-types": "^4.20250525.0",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@react-router/dev": "^7.6.0",
+    "@react-router/dev": "^7.6.1",
     "@tailwindcss/vite": "^4.1.7",
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.5",
