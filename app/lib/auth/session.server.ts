@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { type Session, type SessionData, redirect } from "react-router";
+import { redirect, type Session, type SessionData } from "react-router";
 import { db } from "../db/drizzle.server";
 import { logger } from "../logger";
 import { redirectWithToast } from "../toast.server";

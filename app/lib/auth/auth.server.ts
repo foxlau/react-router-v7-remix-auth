@@ -1,13 +1,13 @@
 import { env } from "cloudflare:workers";
 import { createId } from "@paralleldrive/cuid2";
 import { and, eq } from "drizzle-orm";
-import { type SessionStorage, createCookieSessionStorage } from "react-router";
+import { createCookieSessionStorage, type SessionStorage } from "react-router";
 import { Authenticator } from "remix-auth";
 
 import { db } from "../db/drizzle.server";
-import { type InsertAccount, accountsTable, usersTable } from "../db/schema";
-import { validateEmail } from "../email/email-validator.server";
+import { accountsTable, type InsertAccount, usersTable } from "../db/schema";
 import { sendAuthTotpEmail } from "../email/email.server";
+import { validateEmail } from "../email/email-validator.server";
 import { logger } from "../logger";
 import { getErrorMessage } from "../utils";
 import { SessionManager } from "../workers/session-manager.server";

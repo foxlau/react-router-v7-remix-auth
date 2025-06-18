@@ -9,8 +9,8 @@ import { redirectWithToast } from "../../toast.server";
 import { auth } from "../auth.server";
 import { getSessionFromCookie } from "../session.server";
 import {
-  Verification,
   generateVerification,
+  Verification,
   verifyCode,
 } from "../verification.server";
 

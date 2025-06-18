@@ -1,5 +1,5 @@
 import { HouseIcon, PlusIcon } from "lucide-react";
-import { Link, Outlet, data } from "react-router";
+import { data, Link, Outlet } from "react-router";
 import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { buttonVariants } from "~/components/ui/button";
 import {

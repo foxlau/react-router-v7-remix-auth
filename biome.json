@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -20,8 +20,12 @@
       "semicolons": "always"
     }
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
@@ -29,7 +33,16 @@
       "recommended": true,
       "style": {
         "useImportType": "warn",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "correctness": {
         "noEmptyPattern": "off",
@@ -58,10 +71,11 @@
     }
   },
   "files": {
-    "ignore": [
-      "drizzle/**/*",
-      "**/.react-router/**/*",
-      "**/worker-configuration.d.ts"
+    "includes": [
+      "**",
+      "!**/drizzle/**/*",
+      "!**/.react-router/**/*",
+      "!**/worker-configuration.d.ts"
     ]
   }
 }

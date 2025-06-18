@@ -34,7 +34,9 @@ const MODAL_DESCRIPTION = "Clicking continue will sign you out of this device.";
 
 export function SessionManage({
   sessionsPromise,
-}: { sessionsPromise: Promise<ProcessedSession[]> }) {
+}: {
+  sessionsPromise: Promise<ProcessedSession[]>;
+}) {
   return (
     <div className="space-y-4">
       <header className="space-y-2">
@@ -63,11 +65,7 @@ export function SessionManage({
   );
 }
 
-export function SessionItem({
-  session,
-}: {
-  session: ProcessedSession;
-}) {
+export function SessionItem({ session }: { session: ProcessedSession }) {
   const [open, setOpen] = useState(false);
   const fetcher = useFetcher();
   const isPending = fetcher.state !== "idle";

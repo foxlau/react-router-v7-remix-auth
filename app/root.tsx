@@ -1,15 +1,14 @@
 import {
+  data,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  data,
 } from "react-router";
 import { HoneypotProvider } from "remix-utils/honeypot/react";
-import { Toaster } from "sonner";
-
 import { Honeypot } from "remix-utils/honeypot/server";
+import { Toaster } from "sonner";
 import type { Route } from "./+types/root";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { ProgressBar } from "./components/progress-bar";
