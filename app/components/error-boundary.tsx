@@ -37,12 +37,6 @@ const HTTP_ERROR_CONFIG: Record<number, ErrorDisplayProps> = {
   },
 };
 
-const DEFAULT_ERROR = {
-  message: "Oops, something went wrong.",
-  detail:
-    "Unexpected error. Refresh to try again or contact support if the issue persists.",
-};
-
 function DevErrorDisplay({
   message,
   detail,
@@ -65,7 +59,7 @@ function DevErrorDisplay({
 
 export function ProductionErrorDisplay({ message, detail }: ErrorDisplayProps) {
   return (
-    <main className="flex items-center px-6 py-12 sm:py-24">
+    <main className="flex h-screen items-center justify-center p-6">
       <div className="mx-auto flex max-w-sm flex-col items-center gap-4 text-center">
         <div className="rounded-full bg-muted p-3">
           <MehIcon className="size-6" />
@@ -84,23 +78,19 @@ export function ProductionErrorDisplay({ message, detail }: ErrorDisplayProps) {
   );
 }
 
-function getErrorInfo(error: unknown): ErrorDisplayProps {
-  if (!isRouteErrorResponse(error)) {
-    return DEFAULT_ERROR;
-  }
-
-  const httpError = HTTP_ERROR_CONFIG[error.status];
-
-  return {
-    message: error.data?.message ?? httpError?.message ?? DEFAULT_ERROR.message,
-    detail: error.data?.detail ?? httpError?.detail ?? DEFAULT_ERROR.detail,
-  };
-}
-
 export function GeneralErrorBoundary() {
   const error = useRouteError();
+  let message = "Oops, something went wrong.";
+  let detail =
+    "Unexpected error. Refresh to try again or contact support if the issue persists.";
 
-  if (import.meta.env.DEV && error instanceof Error) {
+  if (isRouteErrorResponse(error)) {
+    message = error.data.message || HTTP_ERROR_CONFIG[error.status]?.message;
+    detail = error.data.detail || HTTP_ERROR_CONFIG[error.status]?.detail;
+  }
+
+  // Handle development errors
+  if (import.meta.env.DEV && error && error instanceof Error) {
     console.log("🔴 error on dev", error);
     return (
       <DevErrorDisplay
@@ -111,7 +101,6 @@ export function GeneralErrorBoundary() {
     );
   }
 
-  const { message, detail } = getErrorInfo(error);
-
+  // Handle other errors
   return <ProductionErrorDisplay message={message} detail={detail} />;
 }
