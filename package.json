@@ -19,7 +19,7 @@
     "db:apply-prod": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
-    "@conform-to/react": "^1.7.0",
+    "@conform-to/react": "^1.7.2",
     "@conform-to/zod": "^1.7.0",
     "@epic-web/totp": "^4.0.1",
     "@paralleldrive/cuid2": "^2.2.2",
