@@ -58,7 +58,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.0.0",
     "@cloudflare/vite-plugin": "^1.7.1",
-    "@cloudflare/workers-types": "^4.20250618.0",
+    "@cloudflare/workers-types": "^4.20250628.0",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@react-router/dev": "^7.6.2",
