@@ -13,7 +13,7 @@ importers:
         version: 1.8.0(react@19.1.0)
       '@conform-to/zod':
         specifier: ^1.8.0
-        version: 1.8.0(zod@3.25.67)
+        version: 1.8.0(zod@3.25.74)
       '@epic-web/totp':
         specifier: ^4.0.1
         version: 4.0.1
@@ -91,7 +91,7 @@ importers:
         version: 3.4.1(remix-auth@4.2.0)
       remix-utils:
         specifier: ^8.7.0
-        version: 8.7.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@3.25.67)
+        version: 8.7.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@3.25.74)
       sonner:
         specifier: ^2.0.5
         version: 2.0.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -111,8 +111,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
-        specifier: ^3.25.67
-        version: 3.25.67
+        specifier: ^3.25.74
+        version: 3.25.74
     devDependencies:
       '@biomejs/biome':
         specifier: 2.0.6
@@ -3263,8 +3263,8 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
-  zod@3.25.67:
-    resolution: {integrity: sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==}
+  zod@3.25.74:
+    resolution: {integrity: sha512-J8poo92VuhKjNknViHRAIuuN6li/EwFbAC8OedzI8uxpEPGiXHGQu9wemIAioIpqgfB4SySaJhdk0mH5Y4ICBg==}
 
 snapshots:
 
@@ -3662,10 +3662,10 @@ snapshots:
       '@conform-to/dom': 1.8.0
       react: 19.1.0
 
-  '@conform-to/zod@1.8.0(zod@3.25.67)':
+  '@conform-to/zod@1.8.0(zod@3.25.74)':
     dependencies:
       '@conform-to/dom': 1.8.0
-      zod: 3.25.67
+      zod: 3.25.74
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -5576,7 +5576,7 @@ snapshots:
 
   remix-auth@4.2.0: {}
 
-  remix-utils@8.7.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@3.25.67):
+  remix-utils@8.7.0(@oslojs/crypto@1.0.1)(@oslojs/encoding@1.1.0)(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@3.25.74):
     dependencies:
       type-fest: 4.41.0
     optionalDependencies:
@@ -5584,7 +5584,7 @@ snapshots:
       '@oslojs/encoding': 1.1.0
       react: 19.1.0
       react-router: 7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      zod: 3.25.67
+      zod: 3.25.74
 
   require-directory@2.1.1: {}
 
@@ -5982,4 +5982,4 @@ snapshots:
 
   zod@3.22.3: {}
 
-  zod@3.25.67: {}
+  zod@3.25.74: {}
