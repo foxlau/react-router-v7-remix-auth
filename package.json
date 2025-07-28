@@ -63,7 +63,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@react-router/dev": "^7.7.0",
     "@tailwindcss/vite": "^4.1.11",
-    "@types/node": "^24.0.14",
+    "@types/node": "^24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "drizzle-kit": "~0.31.4",
