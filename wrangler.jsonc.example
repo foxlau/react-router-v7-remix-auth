@@ -39,59 +39,40 @@
   "kv_namespaces": [
     {
       "binding": "APP_KV",
-      "id": "15de0655003646a9a19be457e24b1896",
-      "preview_id": "app_kv_preview_id"
+      "id": "your_kv_namespace_id",
+      "preview_id": "your_kv_preview_id"
     }
   ],
 
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "rr7-remix-auth",
-      "database_id": "fa94896e-0754-4471-b183-e87cb5568112",
+      "database_name": "your-database-name",
+      "database_id": "your-database-id",
       "migrations_dir": "drizzle"
     }
   ],
-
-  // "workflows": [
-  //   {
-  //     "name": "backup-workflow", // name of your workflow
-  //     "binding": "BACKUP_WORKFLOW", // binding name env.BACKUPWORKFLOW
-  //     "class_name": "BackupWorkflow" // this is class that extends the Workflow class in workers/workflows/backup-workflow.ts
-  //   }
-  // ],
-
-  // "r2_buckets": [
-  //   {
-  //     "binding": "BACKUP_BUCKET",
-  //     "bucket_name": "d1-backups"
-  //   }
-  // ],
-
-  // "triggers": {
-  //   "crons": ["0 0 * * *"]
-  // },
 
   "vars": {
     "ENVIRONMENT": "development",
     "APP_URL": "https://your-app-url.workers.dev",
 
     // Secrets
-    "SESSION_SECRET": "3ebc25b381e87193f29ffea6b6d380dd",
-    "HONEYPOT_SECRET": "759657ffa254f2f17d9df02763f2138f",
+    "SESSION_SECRET": "your-session-secret",
+    "HONEYPOT_SECRET": "your-honeypot-secret",
 
     // OAuth
-    "GITHUB_CLIENT_ID": "...",
-    "GITHUB_CLIENT_SECRET": "...",
-    "GOOGLE_CLIENT_ID": "...apps.googleusercontent.com",
-    "GOOGLE_CLIENT_SECRET": "...",
+    "GITHUB_CLIENT_ID": "your-github-client-id",
+    "GITHUB_CLIENT_SECRET": "your-github-client-secret",
+    "GOOGLE_CLIENT_ID": "your-google-client-id.apps.googleusercontent.com",
+    "GOOGLE_CLIENT_SECRET": "your-google-client-secret",
 
     // Email
-    "RESEND_API_KEY": "re_...",
+    "RESEND_API_KEY": "re_your-resend-api-key",
 
     // Cloudflare
-    "CLOUDFLARE_ACCOUNT_ID": "...",
-    "CLOUDFLARE_DATABASE_ID": "...",
-    "D1_REST_API_TOKEN": "..."
+    "CLOUDFLARE_ACCOUNT_ID": "your-cloudflare-account-id",
+    "CLOUDFLARE_DATABASE_ID": "your-cloudflare-database-id",
+    "D1_REST_API_TOKEN": "your-d1-rest-api-token"
   }
 }

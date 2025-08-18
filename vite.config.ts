@@ -13,17 +13,18 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
-  ssr: {
-    resolve: {
-      conditions: ["workerd", "worker", "browser"],
-      externalConditions: ["workerd", "worker"],
-    },
-  },
-  resolve: {
-    mainFields: ["browser", "module", "main"],
+  server: {
+    open: true,
   },
   build: {
-    outDir: "build",
     minify: true,
+  },
+  optimizeDeps: {
+    exclude: [
+      "cloudflare:email",
+      "cloudflare:sockets",
+      "cloudflare:workers",
+      "cloudflare:workflows",
+    ],
   },
 });
