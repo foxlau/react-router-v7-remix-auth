@@ -22,7 +22,7 @@ jobs:
     name: ⬣ Biome lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: biomejs/setup-biome@v2
       - run: biome ci . --reporter=github
 
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
@@ -40,7 +40,7 @@ jobs:
           version: 9.15.5
 
       - name: 🟢 Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: "pnpm"

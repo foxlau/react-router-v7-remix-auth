@@ -10,25 +10,6 @@
   ],
 
   /**
-   * Static Assets
-   * @see https://developers.cloudflare.com/workers/wrangler/configuration/#static-assets
-   */
-  "assets": {
-    "directory": "./build/client/"
-  },
-
-  /**
-   * Cloudflare Workers accounts come with a workers.dev subdomain that is configurable in the Cloudflare dashboard.
-   */
-  "workers_dev": true,
-
-  /**
-   * Whether Wrangler should keep variables configured in the dashboard on deploy.
-   * @see https://developers.cloudflare.com/workers/wrangler/configuration/
-   */
-  "keep_vars": true,
-
-  /**
    * Configures automatic observability settings for telemetry data emitted from your Worker.
    * @see https://developers.cloudflare.com/workers/wrangler/configuration/#observability
    */
@@ -49,7 +30,8 @@
       "binding": "DB",
       "database_name": "your-database-name",
       "database_id": "your-database-id",
-      "migrations_dir": "drizzle"
+      "preview_database_id": "d1_db_preview_id",
+      "migrations_dir": "./drizzle"
     }
   ],
 
