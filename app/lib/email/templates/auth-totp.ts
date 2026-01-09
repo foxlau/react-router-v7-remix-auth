@@ -4,12 +4,12 @@ import { formatExpiryDuration } from "~/lib/utils";
 import type { EmailTemplate } from "../providers/types";
 
 export function createTotpTemplate({ code }: { code: string }): EmailTemplate {
-  const duration = formatExpiryDuration(AUTH_TOTP_PERIOD);
-  const sendTime = new Date().toUTCString();
+	const duration = formatExpiryDuration(AUTH_TOTP_PERIOD);
+	const sendTime = new Date().toUTCString();
 
-  return {
-    subject: `Your ${site.name} login code is ${code}`,
-    html: `
+	return {
+		subject: `Your ${site.name} login code is ${code}`,
+		html: `
       <!DOCTYPE html>
       <html lang="en">
         <head>
@@ -40,7 +40,7 @@ export function createTotpTemplate({ code }: { code: string }): EmailTemplate {
         </body>
       </html>
     `,
-    text: `
+		text: `
 Hi, there!
 
 Your ${site.name} login code.
@@ -51,5 +51,5 @@ This is a one-time code that expires in ${duration}. To protect your account, do
 
 Didn't request this? If you didn't request this, you can safely ignore this email.
     `.trim(),
-  };
+	};
 }

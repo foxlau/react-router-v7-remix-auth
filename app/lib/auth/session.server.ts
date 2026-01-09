@@ -8,7 +8,7 @@ import { SessionManager } from "../workers/session-manager.server";
 import { type AuthUserSession, auth } from "./auth.server";
 
 export const AUTH_USER_KEY = "auth-user";
-export const AUTH_SUCCESS_REDIRECT_TO = "/home";
+export const AUTH_SUCCESS_REDIRECT_TO = "/";
 export const AUTH_ERROR_REDIRECT_TO = "/auth/login";
 
 /**
@@ -20,18 +20,18 @@ export const AUTH_ERROR_REDIRECT_TO = "/auth/login";
  * @returns The redirect response
  */
 export async function handleAuthSuccess(
-  provider: string,
-  request: Request,
-  redirectTo = AUTH_SUCCESS_REDIRECT_TO,
+	provider: string,
+	request: Request,
+	redirectTo = AUTH_SUCCESS_REDIRECT_TO,
 ) {
-  const user = await auth.authenticate(provider, request);
-  const session = await auth.getSession(request.headers.get("Cookie"));
-  session.unset("auth:email");
-  session.set(AUTH_USER_KEY, user);
+	const user = await auth.authenticate(provider, request);
+	const session = await auth.getSession(request.headers.get("Cookie"));
+	session.unset("auth:email");
+	session.set(AUTH_USER_KEY, user);
 
-  return redirect(redirectTo, {
-    headers: { "Set-Cookie": await auth.commitSession(session) },
-  });
+	return redirect(redirectTo, {
+		headers: { "Set-Cookie": await auth.commitSession(session) },
+	});
 }
 
 /**
@@ -43,18 +43,18 @@ export async function handleAuthSuccess(
  * @returns The redirect response
  */
 export async function handleAuthError(
-  provider: string,
-  error: unknown,
-  redirectTo = AUTH_ERROR_REDIRECT_TO,
+	provider: string,
+	error: unknown,
+	redirectTo = AUTH_ERROR_REDIRECT_TO,
 ) {
-  if (error instanceof Response) throw error;
-  const message = getErrorMessage(error);
-  logger.error({ event: "auth_login_error", provider, message });
+	if (error instanceof Response) throw error;
+	const message = getErrorMessage(error);
+	logger.error({ event: "auth_login_error", provider, message });
 
-  throw await redirectWithToast(redirectTo, {
-    title: message,
-    type: "error",
-  });
+	throw await redirectWithToast(redirectTo, {
+		title: message,
+		type: "error",
+	});
 }
 
 /**
@@ -65,43 +65,43 @@ export async function handleAuthError(
  * @returns The user data
  */
 export async function validateSession(
-  session: Session<SessionData, SessionData>,
-  sessionUser: AuthUserSession | null,
+	session: Session<SessionData, SessionData>,
+	sessionUser: AuthUserSession | null,
 ) {
-  if (!sessionUser?.userId || !sessionUser?.sessionId) {
-    return null;
-  }
+	if (!sessionUser?.userId || !sessionUser?.sessionId) {
+		return null;
+	}
 
-  const sessionManager = new SessionManager(env.APP_KV);
-  const [user, sessionData] = await Promise.all([
-    db.query.usersTable.findFirst({
-      where: (users, { eq }) => eq(users.id, sessionUser.userId),
-      columns: {
-        id: true,
-        email: true,
-        displayName: true,
-        avatarUrl: true,
-        status: true,
-        createdAt: true,
-      },
-    }),
-    sessionManager.getSession(sessionUser.userId, sessionUser.sessionId),
-  ]);
+	const sessionManager = new SessionManager(env.APP_KV);
+	const [user, sessionData] = await Promise.all([
+		db.query.usersTable.findFirst({
+			where: (users, { eq }) => eq(users.id, sessionUser.userId),
+			columns: {
+				id: true,
+				email: true,
+				displayName: true,
+				avatarUrl: true,
+				status: true,
+				createdAt: true,
+			},
+		}),
+		sessionManager.getSession(sessionUser.userId, sessionUser.sessionId),
+	]);
 
-  // If the user is not active or the session data does not exist
-  // destroy the session and redirect to the home page
-  if (user?.status !== "active" || !sessionData) {
-    throw redirect("/", {
-      headers: { "Set-Cookie": await auth.destroySession(session) },
-    });
-  }
+	// If the user is not active or the session data does not exist
+	// destroy the session and redirect to the home page
+	if (user?.status !== "active" || !sessionData) {
+		throw redirect("/", {
+			headers: { "Set-Cookie": await auth.destroySession(session) },
+		});
+	}
 
-  return {
-    session: {
-      id: sessionData.sessionId,
-    },
-    user,
-  };
+	return {
+		session: {
+			id: sessionData.sessionId,
+		},
+		user,
+	};
 }
 
 /**
@@ -111,9 +111,9 @@ export async function validateSession(
  * @returns The session data
  */
 export async function getSessionFromCookie(request: Request) {
-  const session = await auth.getSession(request.headers.get("Cookie"));
-  const sessionUser = session.get(AUTH_USER_KEY);
-  return { session, sessionUser: sessionUser ?? null };
+	const session = await auth.getSession(request.headers.get("Cookie"));
+	const sessionUser = session.get(AUTH_USER_KEY);
+	return { session, sessionUser: sessionUser ?? null };
 }
 
 /**
@@ -123,9 +123,9 @@ export async function getSessionFromCookie(request: Request) {
  * @returns The session data
  */
 export async function querySession(request: Request) {
-  const { session, sessionUser } = await getSessionFromCookie(request);
-  const validSession = await validateSession(session, sessionUser);
-  return { session, validSession };
+	const { session, sessionUser } = await getSessionFromCookie(request);
+	const validSession = await validateSession(session, sessionUser);
+	return { session, validSession };
 }
 
 /**
@@ -136,17 +136,17 @@ export async function querySession(request: Request) {
  * @returns The redirect response
  */
 export async function logout(request: Request, kv: KVNamespace) {
-  const { session, sessionUser } = await getSessionFromCookie(request);
+	const { session, sessionUser } = await getSessionFromCookie(request);
 
-  if (sessionUser) {
-    const sessionManager = new SessionManager(kv);
-    await sessionManager.deleteSession(
-      sessionUser.userId,
-      sessionUser.sessionId,
-    );
-  }
+	if (sessionUser) {
+		const sessionManager = new SessionManager(kv);
+		await sessionManager.deleteSession(
+			sessionUser.userId,
+			sessionUser.sessionId,
+		);
+	}
 
-  return redirect(AUTH_ERROR_REDIRECT_TO, {
-    headers: { "Set-Cookie": await auth.destroySession(session) },
-  });
+	return redirect(AUTH_ERROR_REDIRECT_TO, {
+		headers: { "Set-Cookie": await auth.destroySession(session) },
+	});
 }

@@ -1,9 +1,9 @@
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogParams {
-  event: string;
-  level?: LogLevel;
-  [key: string]: unknown;
+	event: string;
+	level?: LogLevel;
+	[key: string]: unknown;
 }
 
 type BaseLogParams = Omit<LogParams, "level"> & { event: string };
@@ -34,27 +34,27 @@ type BaseLogParams = Omit<LogParams, "level"> & { event: string };
  * // }
  */
 export const logger = {
-  log(params: LogParams) {
-    console.log({
-      ...params,
-      level: params.level || "info",
-      timestamp: new Date().toISOString(),
-    });
-  },
+	log(params: LogParams) {
+		console.log({
+			...params,
+			level: params.level || "info",
+			timestamp: new Date().toISOString(),
+		});
+	},
 
-  debug(params: BaseLogParams) {
-    this.log({ ...params, level: "debug" });
-  },
+	debug(params: BaseLogParams) {
+		this.log({ ...params, level: "debug" });
+	},
 
-  info(params: BaseLogParams) {
-    this.log({ ...params, level: "info" });
-  },
+	info(params: BaseLogParams) {
+		this.log({ ...params, level: "info" });
+	},
 
-  warn(params: BaseLogParams) {
-    this.log({ ...params, level: "warn" });
-  },
+	warn(params: BaseLogParams) {
+		this.log({ ...params, level: "warn" });
+	},
 
-  error(params: BaseLogParams) {
-    this.log({ ...params, level: "error" });
-  },
+	error(params: BaseLogParams) {
+		this.log({ ...params, level: "error" });
+	},
 };

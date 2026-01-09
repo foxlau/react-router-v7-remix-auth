@@ -1,20 +1,18 @@
-import { useRouteLoaderData } from "react-router";
-import type { loader as rootLoader } from "~/routes/layout";
-
-type UserType = Awaited<ReturnType<typeof rootLoader>>["data"]["user"];
-
-function isUser(user: UserType) {
-  return user && typeof user === "object" && typeof user.id === "string";
-}
-
-export function useOptionalUser() {
-  const data = useRouteLoaderData<typeof rootLoader>("routes/layout");
-  if (!data || !isUser(data.user)) return undefined;
-  return data.user;
-}
+import { unstable_useRoute as useRoute } from "react-router";
 
 export function useUser() {
-  const optionalUser = useOptionalUser();
-  if (!optionalUser) throw new Error("No user found.");
-  return optionalUser;
+	const data = useRoute("root");
+
+	if (!data?.loaderData?.user) {
+		throw new Error(
+			"Authentication data not available. Make sure you're using this hook within the root route.",
+		);
+	}
+
+	return data.loaderData.user;
+}
+
+export function useOptionalAuthUser() {
+	const data = useRoute("root");
+	return data?.loaderData?.user;
 }

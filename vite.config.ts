@@ -5,26 +5,26 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [
-    cloudflare({
-      viteEnvironment: { name: "ssr" },
-    }),
-    tailwindcss(),
-    reactRouter(),
-    tsconfigPaths(),
-  ],
-  server: {
-    open: true,
-  },
-  build: {
-    minify: true,
-  },
-  optimizeDeps: {
-    exclude: [
-      "cloudflare:email",
-      "cloudflare:sockets",
-      "cloudflare:workers",
-      "cloudflare:workflows",
-    ],
-  },
+	plugins: [
+		cloudflare({
+			viteEnvironment: { name: "ssr" },
+		}),
+		tailwindcss(),
+		reactRouter(),
+		tsconfigPaths(),
+	],
+	server: {
+		open: true,
+	},
+	build: {
+		minify: true,
+	},
+	optimizeDeps: {
+		exclude: [
+			"cloudflare:email",
+			"cloudflare:sockets",
+			"cloudflare:workers",
+			"cloudflare:workflows",
+		],
+	},
 });

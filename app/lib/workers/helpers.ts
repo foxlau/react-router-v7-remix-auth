@@ -1,7 +1,7 @@
 import {
-  RateLimiter,
-  type RateLimitInfo,
-  type RateLimitOptions,
+	RateLimiter,
+	type RateLimitInfo,
+	type RateLimitOptions,
 } from "./rate-limiter.server";
 
 /**
@@ -10,24 +10,24 @@ import {
  * @returns Formatted wait time string
  */
 function formatWaitTime(resetTime: number): string {
-  const seconds = Math.ceil((resetTime - Date.now()) / 1000);
-  if (seconds < 60) {
-    return `${seconds} seconds`;
-  }
+	const seconds = Math.ceil((resetTime - Date.now()) / 1000);
+	if (seconds < 60) {
+		return `${seconds} seconds`;
+	}
 
-  const minutes = Math.ceil(seconds / 60);
-  if (minutes < 60) {
-    return `${minutes} minutes`;
-  }
+	const minutes = Math.ceil(seconds / 60);
+	if (minutes < 60) {
+		return `${minutes} minutes`;
+	}
 
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
+	const hours = Math.floor(minutes / 60);
+	const remainingMinutes = minutes % 60;
 
-  let formattedWaitTime = `${hours} hours`;
-  if (remainingMinutes > 0) {
-    formattedWaitTime += ` ${remainingMinutes} minutes`;
-  }
-  return formattedWaitTime;
+	let formattedWaitTime = `${hours} hours`;
+	if (remainingMinutes > 0) {
+		formattedWaitTime += ` ${remainingMinutes} minutes`;
+	}
+	return formattedWaitTime;
 }
 
 /**
@@ -40,17 +40,17 @@ function formatWaitTime(resetTime: number): string {
  * @throws {Error} When request exceeds rate limit
  */
 export async function rateLimit(
-  headers: Headers,
-  options: RateLimitOptions,
+	headers: Headers,
+	options: RateLimitOptions,
 ): Promise<void> {
-  const ip = headers.get("CF-Connecting-IP") || "127.0.0.1";
-  const { kv, ...rateLimiterOptions } = options;
-  const limiter = new RateLimiter({ kv, ...rateLimiterOptions });
-  const result: RateLimitInfo = await limiter.check(ip);
+	const ip = headers.get("CF-Connecting-IP") || "127.0.0.1";
+	const { kv, ...rateLimiterOptions } = options;
+	const limiter = new RateLimiter({ kv, ...rateLimiterOptions });
+	const result: RateLimitInfo = await limiter.check(ip);
 
-  if (result.isLimited) {
-    const waitTime = formatWaitTime(result.reset);
-    const message = `Too many requests. Please try again in ${waitTime}`;
-    throw new Error(message);
-  }
+	if (result.isLimited) {
+		const waitTime = formatWaitTime(result.reset);
+		const message = `Too many requests. Please try again in ${waitTime}`;
+		throw new Error(message);
+	}
 }

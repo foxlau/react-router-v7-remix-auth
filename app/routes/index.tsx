@@ -1,55 +1,74 @@
-import { ArrowRightIcon } from "lucide-react";
+import {
+	ArrowRightIcon,
+	CircleFadingPlusIcon,
+	UserCogIcon,
+} from "lucide-react";
 import { href, Link } from "react-router";
-
-import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
-import { GithubIcon, ReactRouterIcon } from "~/components/icons";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { GithubIcon } from "~/components/icons";
+import { buttonVariants } from "~/components/ui/button";
+import { useOptionalAuthUser } from "~/hooks/use-user";
 import { site } from "~/lib/config";
 import { cn } from "~/lib/utils";
-import type { Route } from "./+types";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: site.name }];
-};
+export function meta() {
+	return [{ title: site.name, description: site.description }];
+}
 
-export default function HomeRoute() {
-  return (
-    <div className="relative flex h-dvh w-full flex-col bg-background">
-      <div className="absolute top-4 right-4 sm:right-10">
-        <ColorSchemeToggle />
-      </div>
-      <main className="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center px-6 sm:px-10">
-        <section className="flex flex-col items-center gap-4">
-          <ReactRouterIcon theme="light" className="block w-24 dark:hidden" />
-          <ReactRouterIcon theme="dark" className="hidden w-24 dark:block" />
+export default function IndexRoute() {
+	const user = useOptionalAuthUser();
 
-          <div className="font-extrabold text-4xl text-primary leading-8 tracking-tight sm:text-5xl sm:leading-10">
-            React Router v7 <br /> with Remix auth.
-          </div>
+	return (
+		<div className="flex h-[calc(100vh-300px)] flex-col items-center justify-center">
+			<section className="flex flex-col items-center gap-6">
+				<div className="bg-linear-to-b from-primary to-primary/60 bg-clip-text text-center font-extrabold text-5xl text-transparent leading-12 tracking-tight">
+					React Router <br /> with Remix Auth.
+				</div>
 
-          <p className="text-center font-normal text-base opacity-80">
-            {site.description}
-          </p>
+				<p className="text-center font-mono text-[15px] text-muted-foreground">
+					{site.description}
+				</p>
 
-          <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
-              <Link
-                to="https://github.com/foxlau/react-router-v7-remix-auth"
-                reloadDocument
-              >
-                <GithubIcon />
-                Star on Github
-              </Link>
-            </Button>
-            <Link
-              to={href("/auth/login")}
-              className={cn(buttonVariants({ variant: "outline" }))}
-            >
-              Get Started <ArrowRightIcon className="size-4" />
-            </Link>
-          </div>
-        </section>
-      </main>
-    </div>
-  );
+				<div className="flex items-center gap-2">
+					{user ? (
+						<>
+							<Link
+								to={href("/todos")}
+								className={cn(buttonVariants({ variant: "secondary" }))}
+								reloadDocument
+							>
+								<CircleFadingPlusIcon />
+								Create Todo
+							</Link>
+
+							<Link
+								to={href("/account")}
+								className={cn(buttonVariants({ variant: "secondary" }))}
+							>
+								<UserCogIcon />
+								Account Settings
+							</Link>
+						</>
+					) : (
+						<>
+							<Link
+								to="https://github.com/foxlau/react-router-v7-remix-auth"
+								className={cn(buttonVariants({ variant: "secondary" }))}
+								reloadDocument
+							>
+								<GithubIcon />
+								Star on Github
+							</Link>
+
+							<Link
+								to={href("/auth/login")}
+								className={cn(buttonVariants({ variant: "secondary" }))}
+							>
+								Get Started <ArrowRightIcon className="size-4" />
+							</Link>
+						</>
+					)}
+				</div>
+			</section>
+		</div>
+	);
 }

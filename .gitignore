@@ -1,5 +1,7 @@
 .DS_Store
+.env
 /node_modules/
+*.tsbuildinfo
 
 # React Router
 /.react-router/
@@ -9,5 +11,6 @@
 # Cloudflare
 .mf
 .wrangler
-.dev.vars
+.dev.vars*
 wrangler.jsonc
+worker-configuration.d.ts
