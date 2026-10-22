@@ -21,18 +21,14 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"suspicious": {
 				"noArrayIndexKey": "off"
 			},
 			"nursery": {
-				"useSortedClasses": {
+				"useTailwindSortedClasses": {
 					"level": "error",
-					"fix": "safe",
-					"options": {
-						"attributes": ["className"],
-						"functions": ["cn", "cva", "tw", "clsx", "twMerge"]
-					}
+					"fix": "safe"
 				}
 			},
 			"a11y": {
@@ -65,5 +61,11 @@
 				"organizeImports": "on"
 			}
 		}
+	},
+	"tailwind": {
+		"stylesheet": "./app/styles/app.css",
+		"attributes": ["class", "className"],
+		"mergeFunctions": ["cn", "tw", "clsx", "twMerge"],
+		"variantFunctions": ["cva"]
 	}
 }

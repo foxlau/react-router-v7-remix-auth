@@ -23,7 +23,7 @@ export function Appearance() {
 	return (
 		<div className="space-y-4">
 			<header className="space-y-2">
-				<h2 className="font-semibold text-base">Appearance</h2>
+				<h2 className="text-base font-semibold">Appearance</h2>
 				<p className="text-muted-foreground">
 					Customize the appearance of the app. Automatically switch between day
 					and night themes.
@@ -49,7 +49,7 @@ export function Appearance() {
 								alt={value}
 								width={220}
 								height={160}
-								className="relative cursor-pointer overflow-hidden rounded-lg border border-input shadow-xs outline-none transition-[color,box-shadow] peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-data-disabled:cursor-not-allowed peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent peer-data-disabled:opacity-50"
+								className="relative cursor-pointer overflow-hidden rounded-lg border border-input shadow-xs transition-[color,box-shadow] outline-none peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-50 peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent"
 							/>
 							<span className="group mt-2 flex items-center gap-1 peer-data-[state=unchecked]:text-muted-foreground/70">
 								<CheckIcon
@@ -62,7 +62,7 @@ export function Appearance() {
 									className="group-peer-data-[state=checked]:hidden"
 									aria-hidden="true"
 								/>
-								<span className="font-medium text-xs">{value}</span>
+								<span className="text-xs font-medium">{value}</span>
 							</span>
 						</label>
 					))}

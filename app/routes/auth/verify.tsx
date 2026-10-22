@@ -62,8 +62,8 @@ export default function VerifyRoute({
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex flex-col gap-1">
-				<h1 className="font-semibold text-xl">Check your inbox</h1>
-				<p className="text-balance text-sm">
+				<h1 className="text-xl font-semibold">Check your inbox</h1>
+				<p className="text-sm text-balance">
 					<span className="text-muted-foreground">
 						Enter the verification code we just sent to
 					</span>{" "}
@@ -84,7 +84,7 @@ export default function VerifyRoute({
 					/>
 					{code.errors && (
 						<p
-							className="mt-2 text-destructive text-xs"
+							className="mt-2 text-xs text-destructive"
 							role="alert"
 							aria-live="polite"
 						>
@@ -103,7 +103,7 @@ export default function VerifyRoute({
 				/>
 			</Form>
 
-			<p className="text-balance text-muted-foreground text-xs">
+			<p className="text-xs text-balance text-muted-foreground">
 				No code received?{" "}
 				<a
 					href="/auth/verify"

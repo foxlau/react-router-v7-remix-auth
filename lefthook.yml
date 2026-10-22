@@ -3,12 +3,12 @@ pre-commit:
   jobs:
     - name: Biome
       glob: "*.{js,jsx,ts,tsx,json,css,md,yml}"
-      run: pnpm run check {staged_files}
+      run: bun run check {staged_files}
       stage_fixed: true
     - name: Typecheck
-      run: pnpm run typecheck
+      run: bun run typecheck
 
 commit-msg:
   jobs:
     - name: Commitlint
-      run: pnpm commitlint --edit {1}
+      run: bun run commitlint --edit {1}
