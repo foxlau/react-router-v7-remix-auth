@@ -64,7 +64,7 @@
 		"@cloudflare/vite-plugin": "1.64.0",
 		"@commitlint/cli": "^21.2.4",
 		"@commitlint/config-conventional": "^21.2.4",
-		"@react-router/dev": "^7.18.4",
+		"@react-router/dev": "^8.5.0",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
