@@ -4,6 +4,19 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Keep the starter on React Router v7, Node 24 LTS, and TypeScript 6.
+    # These major migrations are initiated manually rather than repeatedly proposed.
+    ignore:
+      - dependency-name: react-router
+        update-types: [version-update:semver-major]
+      - dependency-name: "@react-router/dev"
+        update-types: [version-update:semver-major]
+      - dependency-name: remix-utils
+        update-types: [version-update:semver-major]
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
     groups:
       compatible-updates:
         update-types:

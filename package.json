@@ -17,12 +17,16 @@
 		"start": "wrangler dev --test-scheduled",
 		"preview": "bun run build && vite preview",
 		"typecheck": "bun run cf-typegen && react-router typegen && tsc -b",
+		"audit": "bun audit",
 		"check": "biome check .",
 		"check:fix": "biome check --fix .",
 		"db:drop": "drizzle-kit drop",
 		"db:generate": "drizzle-kit generate",
 		"db:apply": "wrangler d1 migrations apply DB --local",
 		"db:apply-prod": "wrangler d1 migrations apply DB --remote"
+	},
+	"overrides": {
+		"@esbuild-kit/esm-loader": "npm:tsx@^4.23.15"
 	},
 	"dependencies": {
 		"@conform-to/react": "^1.21.2",
