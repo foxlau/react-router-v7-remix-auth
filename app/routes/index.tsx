@@ -20,7 +20,7 @@ export default function IndexRoute() {
 	return (
 		<div className="flex h-[calc(100vh-300px)] flex-col items-center justify-center">
 			<section className="flex flex-col items-center gap-6">
-				<div className="bg-linear-to-b from-primary to-primary/60 bg-clip-text text-center font-extrabold text-5xl text-transparent leading-12 tracking-tight">
+				<div className="bg-linear-to-b from-primary to-primary/60 bg-clip-text text-center text-5xl leading-12 font-extrabold tracking-tight text-transparent">
 					React Router <br /> with Remix Auth.
 				</div>
 

@@ -40,7 +40,7 @@ export function SessionManage({
 	return (
 		<div className="space-y-4">
 			<header className="space-y-2">
-				<h2 className="font-semibold text-base">Active sessions</h2>
+				<h2 className="text-base font-semibold">Active sessions</h2>
 				<p className="text-muted-foreground">
 					If necessary, you can sign out of all other browser sessions. Some of
 					your recent sessions are listed below, but this list may not be
@@ -108,7 +108,7 @@ export function SessionItem({ session }: { session: ProcessedSession }) {
 				</div>
 				<div>
 					<p>{session.userAgent}</p>
-					<p className="flex flex-col gap-x-2 text-muted-foreground text-xs sm:flex-row">
+					<p className="flex flex-col gap-x-2 text-xs text-muted-foreground sm:flex-row">
 						<span>
 							Ip address: {session.ipAddress}{" "}
 							{session.country !== "Unknown" && `(${session.country})`}

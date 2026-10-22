@@ -100,7 +100,7 @@ export default function TodosRoute({
 	return (
 		<div className="space-y-12">
 			<header className="space-y-2">
-				<h2 className="font-semibold text-base">Todo List</h2>
+				<h2 className="text-base font-semibold">Todo List</h2>
 				<p className="text-muted-foreground">
 					This is a practical case demonstrating the combined use of Cloudflare
 					D1 and Drizzle ORM.
@@ -130,7 +130,7 @@ export default function TodosRoute({
 					</div>
 					{title.errors && (
 						<p
-							className="text-destructive text-xs"
+							className="text-xs text-destructive"
 							role="alert"
 							aria-live="polite"
 						>
