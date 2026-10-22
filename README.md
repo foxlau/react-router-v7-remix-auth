@@ -134,7 +134,7 @@ bun run deploy:promote
 
 ## Dependency updates and auto-merge
 
-Dependabot checks Bun dependencies and GitHub Actions weekly. Minor and patch updates are grouped per ecosystem. The PR validation workflow enables squash auto-merge only for Dependabot minor/patch PRs after lint, type checking, and the production build pass. Major updates require manual review.
+Dependabot checks Bun dependencies and GitHub Actions weekly. Minor and patch updates are grouped per ecosystem. The PR validation workflow enables squash auto-merge only for Dependabot minor/patch PRs after lint, type checking, and the production build pass. Major updates require manual review. Major migrations for React Router, Remix Utils, TypeScript, and Node types are intentionally excluded from routine PRs while this starter targets React Router v7, TypeScript 6, and Node 24 LTS; initiate those migrations manually.
 
 To enable this on GitHub:
 1. In **Settings → General → Pull Requests**, enable **Allow auto-merge** and **Allow squash merging**.
@@ -149,11 +149,19 @@ gh repo edit foxlau/react-router-v7-remix-auth --enable-auto-merge --enable-squa
 
 The workflow and Dependabot configuration must be committed and merged into the default branch before the automation is active.
 
-For this public repository, only PRs authored **and triggered** by the official `dependabot[bot]` account (GitHub user ID `49699333`) can enter the write-enabled merge job. The PR must come from a `dependabot/` branch in this repository, target `main`, and not be a draft. Fork PRs, other authors/actors, and human-triggered re-runs cannot trigger automatic merging. Validation jobs retain read-only permissions; only the isolated merge job has write permissions. It never checks out PR code, keeps Dependabot's author/commit verification enabled, and checks the PR head commit before merging. The workflow uses `pull_request`, not `pull_request_target`.
+For this public repository, only PRs authored **and triggered** by the official `dependabot[bot]` account (GitHub user ID `49699333`) can enter the write-enabled merge job. The PR must come from a `dependabot/` branch in this repository, target `main`, and not be a draft. Fork PRs, other authors/actors, and human-triggered re-runs cannot trigger automatic merging. PR validation jobs retain read-only permissions; PR-merging permissions are confined to the isolated merge job. It never checks out PR code, keeps Dependabot's author/commit verification enabled, and checks the PR head commit before merging. The workflow uses `pull_request`, not `pull_request_target`.
 
 **Allow auto-merge** is a repository-wide GitHub feature, not an author allowlist. This workflow only enables it for Dependabot; maintainers with sufficient repository permissions can still enable it manually on other PRs. External contributors do not gain merge permissions just because the repository is public.
 
 If the repository uses a merge queue, a suitably scoped GitHub App token or personal access token is required instead of `GITHUB_TOKEN`.
+
+### Security checks and dependency graph
+
+Run `bun run audit` locally. Dependency auditing is also part of required PR validation, and `.github/workflows/dependency-security.yaml` rechecks the default branch weekly.
+
+GitHub's native dependency graph does not currently parse `bun.lock`; Bun version-update PR support is separate from security-alert coverage. The default-branch security workflow submits the complete Bun dependency inventory using an immutable, reviewed revision of `pippinmole/bun-dependency-submission`. Only that default-branch submission job receives `contents: write`; it does not run on PRs, install dependencies, execute package scripts, approve PRs, or merge anything. Retire this community integration when first-party Bun dependency-graph support is available.
+
+The `@esbuild-kit/esm-loader` override replaces Drizzle Kit's deprecated loader with its maintained successor, `tsx`, removing the vulnerable nested `esbuild` without forcing every consumer onto a different esbuild release. See [the upstream issue and workaround](https://github.com/drizzle-team/drizzle-orm/issues/4852). Remove the override when the maintained Drizzle Kit release no longer includes the deprecated loader; validate schema export and migration checks when changing it.
 
 ## Questions
 

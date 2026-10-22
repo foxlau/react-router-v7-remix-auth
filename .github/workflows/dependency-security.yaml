@@ -1,0 +1,45 @@
+name: 🔐 Dependency security
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+      - bun.lock
+      - .github/workflows/dependency-security.yaml
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: 🔐 Bun audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - run: bun audit
+
+  submit:
+    name: 📦 Submit Bun dependency graph
+    # Never give fork/PR code a write token, even on a manual workflow dispatch.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      # Reviewed and pinned: parses bun.lock without installing dependencies or running scripts.
+      # Needed until GitHub's native dependency graph supports Bun text lockfiles.
+      - uses: pippinmole/bun-dependency-submission@6dca2c0818f5e295145e90ca20e2aeac84a076ae
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
