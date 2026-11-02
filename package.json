@@ -48,10 +48,10 @@
 		"date-fns": "^4.4.0",
 		"drizzle-orm": "~0.45.4",
 		"isbot": "^5.2.2",
-		"lucide-react": "^1.61.0",
+		"lucide-react": "^1.64.0",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
-		"react-router": "^7.18.4",
+		"react-router": "^7.18.5",
 		"remix-auth": "^4.2.0",
 		"remix-auth-oauth2": "^3.4.1",
 		"remix-utils": "^9.3.1",
@@ -64,11 +64,11 @@
 		"zod": "^4.6.7"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.6.2",
-		"@cloudflare/vite-plugin": "1.64.0",
+		"@biomejs/biome": "2.6.4",
+		"@cloudflare/vite-plugin": "1.66.0",
 		"@commitlint/cli": "^21.2.4",
 		"@commitlint/config-conventional": "^21.2.4",
-		"@react-router/dev": "^7.18.4",
+		"@react-router/dev": "^7.18.5",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
@@ -78,6 +78,6 @@
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3",
 		"vite": "8.3.5",
-		"wrangler": "4.152.0"
+		"wrangler": "4.156.0"
 	}
 }
